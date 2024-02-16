@@ -1,0 +1,25 @@
+#Makevars to make the compiler compile in the subdirectories (do not need to modify)
+
+#Use c++17
+CXX_STD = CXX17
+
+#This flag hides those ugly EIGEN warnings
+#It has been commented out because it is not admissible on CRAN  
+PKG_CXXFLAGS =  -w -Wfatal-errors # -Wno-ignored-attributes 
+PKG_CPPFLAGS = -I"C:/Users/ischi/R/win-library/3.6/RcppEigen/include"
+
+# Group the source files
+SOURCES =  $(wildcard */*.cpp) #subfolders cpp files
+SOURCES_C= $(wildcard */*.c)   #subfolders c files
+SOURCES_SUB =  $(wildcard */*/*.cpp) #sub-subfolders cpp files
+SOURCES_SRC= $(wildcard ./*.cpp)     #current directory cpp files
+SOURCES_C_SRC= $(wildcard ./*.c)       #current directory c files
+
+# Obtain the object files
+OBJECTS=$(SOURCES:.cpp=.o) $(SOURCES_SUB:.cpp=.o) $(SOURCES_C:.c=.o) $(SOURCES_SRC:.cpp=.o) $(SOURCES_C_SRC:.c=.o)
+# meh?
+# $(SOURCES:.cpp=.o):$(SOURCES)
+# $(SOURCES_SUB:.cpp=.o):$(SOURCES_SUB)
+# $(SOURCES_C:.c=.o):$(SOURCES_C)
+# $(SOURCES_SRC:.cpp=.o):$(SOURCES_SRC)
+# $(SOURCES_C_SRC:.c=.o):$(SOURCES_C_SRC)
