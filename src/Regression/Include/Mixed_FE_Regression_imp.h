@@ -1000,7 +1000,7 @@ void MixedFERegressionBase<InputHandler>::computeDegreesOfFreedomExact(UInt outp
 	MatrixXr X1;
 	if (regressionData_.getNumberOfRegions() == 0)
 	{ // pointwise data
-		Rprintf("a");
+		//Rprintf("a");
 		X1 = psi_.transpose() * LeftMultiplybyQ(psi_);
 	}
 	else
@@ -1012,9 +1012,9 @@ void MixedFERegressionBase<InputHandler>::computeDegreesOfFreedomExact(UInt outp
 		isRcomputed_ = true;
 		// take R0 from the final matrix since it has already applied the dirichlet boundary conditions
 		SpMat R0 = matrixNoCov_.bottomRightCorner(nnodes, nnodes) / lambdaS;
-		Rprintf("b");
+		//Rprintf("b");
 		R0dec_.compute(R0);
-		Rprintf("c");
+		//Rprintf("c");
 		if (!regressionData_.isSpaceTime() || !regressionData_.getFlagParabolic())
 		{
 			MatrixXr X2 = R0dec_.solve(R1_);
@@ -1043,7 +1043,7 @@ void MixedFERegressionBase<InputHandler>::computeDegreesOfFreedomExact(UInt outp
 	// impose dirichlet boundary conditions if needed
 	if (regressionData_.getDirichletIndices()->size() != 0)
 	{
-		Rprintf("cc");
+		//Rprintf("cc");
 		const std::vector<UInt> *bc_indices = regressionData_.getDirichletIndices();
 		UInt nbc_indices = bc_indices->size();
 
@@ -1057,7 +1057,7 @@ void MixedFERegressionBase<InputHandler>::computeDegreesOfFreedomExact(UInt outp
 
 	X3 -= P;
 	Eigen::PartialPivLU<MatrixXr> Dsolver(X3);
-	Rprintf("d");
+	//Rprintf("d");
 
 	const auto k = regressionData_.getObservationsIndices();
 
@@ -1094,19 +1094,19 @@ void MixedFERegressionBase<InputHandler>::computeDegreesOfFreedomExact(UInt outp
 	if (regressionData_.isSpaceTime() || !regressionData_.isLocationsByNodes() || regressionData_.isMixed())
 	{
 		MatrixXr X;
-		Rprintf("e");
+		//Rprintf("e");
 		X = Dsolver.solve(X1);
 
-		Rprintf("f");
+		//Rprintf("f");
 		if (regressionData_.getCovariates()->rows() != 0)
 		{
 			degrees += regressionData_.getCovariates()->cols();
 		}
 		for (int i = 0; i < nnodes; ++i)
 		{
-			Rprintf("g");
+			//Rprintf("g");
 			degrees += X(i, i);
-			Rprintf("h");
+			//Rprintf("h");
 		}
 	}
 
