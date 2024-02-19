@@ -83,7 +83,7 @@ CPP_smooth.FEM.basis<-function(locations, observations, FEMbasis, covariates = N
   bigsol <- .Call("regression_Laplace", locations, bary.locations, observations, FEMbasis$mesh, FEMbasis$order,
                   mydim, ndim, covariates, BC$BC_indices, BC$BC_values, incidence_matrix, areal.data.avg, search,
                   optim, lambda, DOF.stochastic.realizations, DOF.stochastic.seed, DOF.matrix, 
-                  GCV.inflation.factor, lambda.optimization.tolerance, PACKAGE = "fdaPDEISCHIAISCHIA")
+                  GCV.inflation.factor, lambda.optimization.tolerance, PACKAGE = "fdaPDEISCHIA")
   return(bigsol)
 }
 
