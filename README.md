@@ -4,6 +4,8 @@ Make sure to have the following dependencies installed on your system:
 - a C++17 compliant compiler
 - the  following R packages: `Rcpp`, `RcppEigen`, `rgl`, `Matrix`, `plot3D`, `plot3Drgl`, `shiny`, `MASS`, `testthat`.
 
+then, to install the latest stable version of `femR`, you can either:
+
 1.  use the `devtools` package. From the R console, execute
 
 <!-- -->
