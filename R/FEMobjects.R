@@ -17,7 +17,7 @@
 #' @usage create.FEM.basis(mesh, saveTree = FALSE)
 #' @seealso \code{\link{create.mesh.2D}}, \code{\link{create.mesh.2.5D}},\code{\link{create.mesh.3D}}
 #' @examples
-#' library(fdaPDE)
+#' library(fdaPDEmixed)
 #' ## Upload the quasicircle2D data
 #' data(quasicircle2D)
 #'
@@ -91,7 +91,7 @@ create.FEM.basis = function(mesh=NULL, saveTree = FALSE)
       storage.mode(myDim) <- "integer"
       storage.mode(nDim) <- "integer"
 
-      bigsol <- .Call("tree_mesh_construction", mesh, mesh$order, myDim, nDim, PACKAGE = "fdaPDEISCHIA")
+      bigsol <- .Call("tree_mesh_construction", mesh, mesh$order, myDim, nDim, PACKAGE = "fdaPDEmixed")
       tree_mesh = list(
       treelev = bigsol[[1]][1],
       header_orig= bigsol[[2]],
@@ -125,7 +125,7 @@ create.FEM.basis = function(mesh=NULL, saveTree = FALSE)
 #' @usage FEM(coeff,FEMbasis)
 #' @return An \code{FEM} object. This contains a list with components \code{coeff} and \code{FEMbasis}.
 #' @examples
-#' library(fdaPDE)
+#' library(fdaPDEmixed)
 #' ## Upload the horseshoe2D data
 #' data(horseshoe2D)
 #'
@@ -189,7 +189,7 @@ FEM.mixed<-function(coeff,num_units,FEMbasis)
 #' @usage FEM.time(coeff,time_mesh,FEMbasis,FLAG_PARABOLIC=FALSE)
 #' @return A \code{FEM.time} object. This contains a list with components \code{coeff}, \code{mesh_time}, \code{FEMbasis} and \code{FLAG_PARABOLIC}.
 #' @examples
-#' library(fdaPDE)
+#' library(fdaPDEmixed)
 #' ## Upload the horseshoe2D data
 #' data(horseshoe2D)
 #'

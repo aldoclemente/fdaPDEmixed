@@ -88,7 +88,7 @@ This function implements a nonparametric density estimation method with differen
 planar mesh. The computation relies only on the C++ implementation of the algorithm.
 }
 \examples{
-library(fdaPDE)
+library(fdaPDEmixed)
 
 ## Create a 2D mesh over a squared domain
 Xbound <- seq(-3, 3, length.out = 10)

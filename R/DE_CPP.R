@@ -47,7 +47,7 @@ CPP_FEM.DE <- function(data, FEMbasis, lambda, fvec, heatStep, heatIter, ndim, m
   bigsol <- .Call("Density_Estimation", data, FEMbasis$mesh, FEMbasis$order, mydim, ndim, fvec,
                   heatStep, heatIter, lambda, nfolds, nsimulations, stepProposals, tol1, tol2,
                   print, step_method, direction_method, preprocess_method, search,
-                  PACKAGE = "fdaPDEISCHIA")
+                  PACKAGE = "fdaPDEmixed")
 
   ## Reset them correctly
   # FEMbasis$mesh$triangles = FEMbasis$mesh$triangles + 1
@@ -105,7 +105,7 @@ CPP_FEM.manifold.DE <- function(data, FEMbasis, lambda, fvec, heatStep, heatIter
   bigsol <- .Call("Density_Estimation", data, FEMbasis$mesh, FEMbasis$order, mydim, ndim, fvec,
                   heatStep, heatIter, lambda, nfolds, nsimulations, stepProposals, tol1, tol2,
                   print, step_method, direction_method, preprocess_method, search,
-                  PACKAGE = "fdaPDEISCHIA")
+                  PACKAGE = "fdaPDEmixed")
 
   return(bigsol)
 }
@@ -158,7 +158,7 @@ CPP_FEM.volume.DE <- function(data, FEMbasis, lambda, fvec, heatStep, heatIter, 
   bigsol <- .Call("Density_Estimation", data, FEMbasis$mesh, FEMbasis$order, mydim, ndim, fvec,
                   heatStep, heatIter, lambda, nfolds, nsimulations, stepProposals, tol1, tol2,
                   print, step_method, direction_method, preprocess_method, search,
-                  PACKAGE = "fdaPDEISCHIA")
+                  PACKAGE = "fdaPDEmixed")
 
   return(bigsol)
 }

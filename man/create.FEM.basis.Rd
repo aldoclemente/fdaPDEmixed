@@ -28,7 +28,7 @@ quadratic finite elements (when \code{order = 2} in the input \code{mesh}).
 If saveTree flag is TRUE, it saves the tree mesh information in advance inside mesh object and can be used later on to save mesh construction time.
 }
 \examples{
-library(fdaPDE)
+library(fdaPDEmixed)
 ## Upload the quasicircle2D data
 data(quasicircle2D)
 

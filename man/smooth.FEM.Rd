@@ -175,7 +175,7 @@ This function implements a spatial regression model with differential regulariza
  can be imposed at the domain boundaries.
 }
 \examples{
-library(fdaPDE)
+library(fdaPDEmixed)
 
 #### No prior information about anysotropy/non-stationarity (laplacian smoothing) ####
 data(horseshoe2D)

@@ -61,7 +61,7 @@ These are respectively used for linear (order = 1) and quadratic (order = 2) Fin
 Create a \code{mesh.2.5D} object from the nodes locations and the connectivity matrix
 }
 \examples{
-library(fdaPDEISCHIA)
+library(fdaPDEmixed)
 
 ## Upload the hub2.5D the data
 data(hub2.5D)

@@ -18,7 +18,7 @@
 #'                    init="Heat", nFolds=5, search = "tree") 
 #' @export
 #' @examples
-#' library(fdaPDE)
+#' library(fdaPDEmixed)
 #' 
 #' ## Create a 2D mesh over a squared domain
 #' Xbound <- seq(-3, 3, length.out = 10)

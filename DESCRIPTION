@@ -1,9 +1,11 @@
-Package: fdaPDEISCHIA
+Package: fdaPDEmixed
 Version: 1.1-2
 Date: 2021-02-03
 Title: Functional Data Analysis and Partial Differential Equations (PDE); Statistical Analysis of Functional and Spatial Data, Based on Regression with PDE Regularization
 Authors@R: c(person("Eleonora", "Arnone", role = c("aut", "cre"),
 		     email = "eleonora.arnone@polimi.it"),
+		     person("Aldo", "Clemente", role = c("aut"),
+		     email = "aldo.clemente@polimi.it"),
 	     person("Laura M.", "Sangalli", role = c("aut"),
 		     email = "laura.sangalli@polimi.it"),
 	     person("Eardi", "Lila", role = c("aut"),

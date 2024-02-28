@@ -83,6 +83,6 @@ CPP_smooth.FEM.mixed <- function(locations, observations, FEMbasis, covariates, 
   storage.mode(threshold_residual) <- "double"
 
   ## Call C++ function
-  bigsol <- .Call("regression_Laplace_mixed", locations, bary.locations, observations, num_units, random_effect, FEMbasis$mesh, FEMbasis$order, mydim, ndim, covariates, BC$BC_indices, BC$BC_values, incidence_matrix, areal.data.avg, search, optim, lambda, DOF.stochastic.realizations, DOF.stochastic.seed, DOF.matrix, GCV.inflation.factor, lambda.optimization.tolerance, PACKAGE = "fdaPDEISCHIA", FLAG_ITERATIVE, threshold, max.steps, threshold_residual, verbose)
+  bigsol <- .Call("regression_Laplace_mixed", locations, bary.locations, observations, num_units, random_effect, FEMbasis$mesh, FEMbasis$order, mydim, ndim, covariates, BC$BC_indices, BC$BC_values, incidence_matrix, areal.data.avg, search, optim, lambda, DOF.stochastic.realizations, DOF.stochastic.seed, DOF.matrix, GCV.inflation.factor, lambda.optimization.tolerance, PACKAGE = "fdaPDEmixed", FLAG_ITERATIVE, threshold, max.steps, threshold_residual, verbose)
   return(bigsol)
 }

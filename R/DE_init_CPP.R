@@ -38,7 +38,7 @@ CPP_FEM.DE_init <- function(data, FEMbasis, lambda, fvec, heatStep, heatIter, nd
   ## Call C++ function
   bigsol <- .Call("Density_Initialization", data, FEMbasis$mesh, FEMbasis$order, mydim, ndim, fvec, heatStep, heatIter, lambda,
                   nfolds, nsimulations, stepProposals, tol1, tol2, print, 
-                  search, init, nFolds, PACKAGE = "fdaPDEISCHIA")
+                  search, init, nFolds, PACKAGE = "fdaPDEmixed")
   
   return(bigsol)
 }
@@ -84,7 +84,7 @@ CPP_FEM.manifold.DE_init <- function(data, FEMbasis, lambda, fvec, heatStep, hea
   ## Call C++ function
   bigsol <- .Call("Density_Initialization", data, FEMbasis$mesh, FEMbasis$order, mydim, ndim, fvec, heatStep, heatIter, lambda,
                   nfolds, nsimulations, stepProposals, tol1, tol2, print,
-                  search, init, nFolds, PACKAGE = "fdaPDEISCHIA")
+                  search, init, nFolds, PACKAGE = "fdaPDEmixed")
   
   return(bigsol)
 }
@@ -132,7 +132,7 @@ CPP_FEM.volume.DE_init <- function(data, FEMbasis, lambda, fvec, heatStep, heatI
   bigsol <- .Call("Density_Initialization", data, FEMbasis$mesh, FEMbasis$order, mydim, ndim, fvec, heatStep, heatIter,
                   lambda, nfolds, nsimulations, stepProposals, tol1, tol2, print,
                   search, init, nFolds,
-                  PACKAGE = "fdaPDEISCHIA")
+                  PACKAGE = "fdaPDEmixed")
   
   return(bigsol)
 }

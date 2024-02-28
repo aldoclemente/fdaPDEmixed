@@ -60,7 +60,7 @@ These are respectively used for linear (order = 1) and quadratic (order = 2) Fin
 Create a \code{mesh.3D} object from the connectivity matrix and nodes locations
 }
 \examples{
-library(fdaPDEISCHIA)
+library(fdaPDEmixed)
 
 ##Load the matrix nodes and tetrahedrons
 data(sphere3Ddata)

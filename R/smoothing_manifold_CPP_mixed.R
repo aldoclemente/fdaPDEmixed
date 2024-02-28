@@ -82,7 +82,7 @@ CPP_smooth.manifold.FEM.mixed<-function(locations, observations, num_units, FEMb
 
   ## Call C++ function
   bigsol <- .Call("regression_Laplace_mixed", locations, observations, num_units, FEMbasis$mesh, FEMbasis$mesh$order, mydim, ndim, lambda, covariates,
-                  incidence_matrix, BC$BC_indices, BC$BC_values, GCV, GCVMETHOD, nrealizations, DOF, DOF_matrix, search, bary.locations, TESTFLAG, PACKAGE = "fdaPDEISCHIA")
+                  incidence_matrix, BC$BC_indices, BC$BC_values, GCV, GCVMETHOD, nrealizations, DOF, DOF_matrix, search, bary.locations, TESTFLAG, PACKAGE = "fdaPDEmixed")
 
   return(bigsol)
 }

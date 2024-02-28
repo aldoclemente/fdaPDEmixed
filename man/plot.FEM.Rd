@@ -24,7 +24,7 @@ If the \code{mesh} is of class \code{mesh.3D}, the color of each triangle or tet
 the coefficients for the Finite Element basis expansion (\code{coeff}).
 }
 \examples{
-library(fdaPDE)
+library(fdaPDEmixed)
 ## Upload the horseshoe2D data
 data(horseshoe2D)
 boundary_nodes = horseshoe2D$boundary_nodes

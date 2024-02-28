@@ -17,7 +17,7 @@
 #' Statistical Society: Series B (Statistical Methodology), 70(5), 931-955.}
 #' }
 #' @examples 
-#' library(fdaPDE)
+#' library(fdaPDEmixed)
 #' 
 #' ## Upload the horseshoe2D data
 #' data(horseshoe2D)
@@ -101,7 +101,7 @@ covs.test = function(x,y){
 #' @return Returns function evaluations, or NAs for points outside the horseshoe domain. 
 #' @usage fs.test.3D(x, y, z, r0 = 0.25, r = 1.25, l = 5, b = 1, exclude = FALSE)  
 #' @examples 
-#' library(fdaPDE)
+#' library(fdaPDEmixed)
 #' 
 #' data(horseshoe2.5D)
 #' mesh = horseshoe2.5D

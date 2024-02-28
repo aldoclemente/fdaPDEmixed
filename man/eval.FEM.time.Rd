@@ -44,7 +44,7 @@ If \code{space.time.locations} is provided \code{locations}, \code{incidence_mat
 \code{time.instants}-by-\code{locations} (or \code{time.instants}-by-areal domains).
 }
 \examples{
-library(fdaPDE)
+library(fdaPDEmixed)
 ## Upload the horseshoe2D data
 data(horseshoe2D)
 boundary_nodes = horseshoe2D$boundary_nodes

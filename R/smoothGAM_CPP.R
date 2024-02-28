@@ -95,7 +95,7 @@ CPP_smooth.GAM.FEM<-function(locations, observations, FEMbasis, covariates = NUL
   bigsol <- .Call("gam_Laplace", locations, bary.locations, observations, FEMbasis$mesh, FEMbasis$order,
                  mydim, ndim, covariates, BC$BC_indices, BC$BC_values, incidence_matrix, areal.data.avg,
                  FAMILY, max.steps.FPIRLS, threshold.FPIRLS, mu0, scale.param, search,
-                 optim, lambda, DOF.stochastic.realizations, DOF.stochastic.seed, DOF.matrix, GCV.inflation.factor, lambda.optimization.tolerance, PACKAGE = "fdaPDEISCHIA")
+                 optim, lambda, DOF.stochastic.realizations, DOF.stochastic.seed, DOF.matrix, GCV.inflation.factor, lambda.optimization.tolerance, PACKAGE = "fdaPDEmixed")
   
   return(bigsol)
 }
@@ -202,7 +202,7 @@ CPP_smooth.GAM.FEM.PDE.basis<-function(locations, observations, FEMbasis, covari
   bigsol <- .Call("gam_PDE", locations, bary.locations, observations, FEMbasis$mesh, FEMbasis$order,
                  mydim, ndim, PDE_parameters$K, PDE_parameters$b, PDE_parameters$c, covariates, BC$BC_indices, BC$BC_values,
                  incidence_matrix, areal.data.avg, FAMILY, max.steps.FPIRLS, threshold.FPIRLS, mu0, scale.param, search,
-                 optim, lambda, DOF.stochastic.realizations, DOF.stochastic.seed, DOF.matrix, GCV.inflation.factor, lambda.optimization.tolerance, PACKAGE = "fdaPDEISCHIA")
+                 optim, lambda, DOF.stochastic.realizations, DOF.stochastic.seed, DOF.matrix, GCV.inflation.factor, lambda.optimization.tolerance, PACKAGE = "fdaPDEmixed")
   
   return(bigsol)
 }
@@ -315,7 +315,7 @@ CPP_smooth.GAM.FEM.PDE.sv.basis<-function(locations, observations, FEMbasis, cov
   bigsol <- .Call("gam_PDE_space_varying", locations, bary.locations, observations, FEMbasis$mesh, FEMbasis$order,
                  mydim, ndim, PDE_param_eval$K, PDE_param_eval$b, PDE_param_eval$c, PDE_param_eval$u, covariates, BC$BC_indices, BC$BC_values,
                  incidence_matrix, areal.data.avg, FAMILY, max.steps.FPIRLS, threshold.FPIRLS, mu0, scale.param,
-                 search, optim, lambda, DOF.stochastic.realizations, DOF.stochastic.seed, DOF.matrix, GCV.inflation.factor, lambda.optimization.tolerance, PACKAGE = "fdaPDEISCHIA")
+                 search, optim, lambda, DOF.stochastic.realizations, DOF.stochastic.seed, DOF.matrix, GCV.inflation.factor, lambda.optimization.tolerance, PACKAGE = "fdaPDEmixed")
   
   return(bigsol)
 }
@@ -419,7 +419,7 @@ CPP_smooth.manifold.GAM.FEM.basis<-function(locations, observations, FEMbasis, c
   bigsol <- .Call("gam_Laplace", locations, bary.locations, observations, FEMbasis$mesh, FEMbasis$mesh$order,
                 mydim, ndim, covariates, BC$BC_indices, BC$BC_values, incidence_matrix, areal.data.avg,
                 FAMILY, max.steps.FPIRLS, threshold.FPIRLS, mu0, scale.param, search, 
-                optim, lambda, DOF.stochastic.realizations, DOF.stochastic.seed, DOF.matrix, GCV.inflation.factor, lambda.optimization.tolerance, PACKAGE = "fdaPDEISCHIA")
+                optim, lambda, DOF.stochastic.realizations, DOF.stochastic.seed, DOF.matrix, GCV.inflation.factor, lambda.optimization.tolerance, PACKAGE = "fdaPDEmixed")
   
   return(bigsol)
 }
@@ -524,7 +524,7 @@ CPP_smooth.volume.GAM.FEM.basis<-function(locations, observations, FEMbasis, cov
   bigsol <- .Call("gam_Laplace", locations, bary.locations, observations, FEMbasis$mesh, FEMbasis$mesh$order,
                  mydim, ndim, covariates, BC$BC_indices, BC$BC_values, incidence_matrix, areal.data.avg,
                  FAMILY, max.steps.FPIRLS, threshold.FPIRLS, mu0, scale.param, search,  
-                 optim, lambda, DOF.stochastic.realizations, DOF.stochastic.seed, DOF.matrix, GCV.inflation.factor, lambda.optimization.tolerance, PACKAGE = "fdaPDEISCHIA")
+                 optim, lambda, DOF.stochastic.realizations, DOF.stochastic.seed, DOF.matrix, GCV.inflation.factor, lambda.optimization.tolerance, PACKAGE = "fdaPDEmixed")
   
   return(bigsol)
 }
@@ -632,7 +632,7 @@ CPP_smooth.volume.GAM.FEM.PDE.basis<-function(locations, observations, FEMbasis,
   bigsol <- .Call("gam_PDE", locations, bary.locations, observations, FEMbasis$mesh, FEMbasis$mesh$order,
                  mydim, ndim, PDE_parameters$K, PDE_parameters$b, PDE_parameters$c, covariates, BC$BC_indices, BC$BC_values, incidence_matrix, areal.data.avg,
                  FAMILY, max.steps.FPIRLS, threshold.FPIRLS, mu0, scale.param, search,  
-                 optim, lambda, DOF.stochastic.realizations, DOF.stochastic.seed, DOF.matrix, GCV.inflation.factor, lambda.optimization.tolerance, PACKAGE = "fdaPDEISCHIA")
+                 optim, lambda, DOF.stochastic.realizations, DOF.stochastic.seed, DOF.matrix, GCV.inflation.factor, lambda.optimization.tolerance, PACKAGE = "fdaPDEmixed")
   
   return(bigsol)
 }
@@ -749,7 +749,7 @@ CPP_smooth.volume.GAM.FEM.PDE.sv.basis<-function(locations, observations, FEMbas
   bigsol <- .Call("gam_PDE_space_varying", locations, bary.locations, observations, FEMbasis$mesh, FEMbasis$mesh$order,
                  mydim, ndim, PDE_param_eval$K, PDE_param_eval$b, PDE_param_eval$c, PDE_param_eval$u, covariates, BC$BC_indices, BC$BC_values, incidence_matrix, areal.data.avg,
                  FAMILY, max.steps.FPIRLS, threshold.FPIRLS, mu0, scale.param, search,  
-                 optim, lambda, DOF.stochastic.realizations, DOF.stochastic.seed, DOF.matrix, GCV.inflation.factor, lambda.optimization.tolerance, PACKAGE = "fdaPDEISCHIA")
+                 optim, lambda, DOF.stochastic.realizations, DOF.stochastic.seed, DOF.matrix, GCV.inflation.factor, lambda.optimization.tolerance, PACKAGE = "fdaPDEmixed")
   
   return(bigsol)
 }

@@ -20,7 +20,7 @@ An \code{FEM} object. This contains a list with components \code{coeff} and \cod
 This function defines a FEM object.
 }
 \examples{
-library(fdaPDE)
+library(fdaPDEmixed)
 ## Upload the horseshoe2D data
 data(horseshoe2D)
 

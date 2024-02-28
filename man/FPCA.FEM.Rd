@@ -69,7 +69,7 @@ This function implements a smooth functional principal component analysis over a
 a smooth manifold or a volume.
 }
 \examples{
-library(fdaPDE)
+library(fdaPDEmixed)
 
 ## Load the hub data
 data(hub2.5D)

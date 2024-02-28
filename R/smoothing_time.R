@@ -1,4 +1,4 @@
-#' @useDynLib fdaPDEISCHIA
+#' @useDynLib fdaPDEmixed
 #' @import Matrix plot3D rgl plot3Drgl geometry
 #' @importFrom grDevices heat.colors palette
 #' @importFrom graphics plot segments points lines
@@ -109,7 +109,7 @@ NULL
 #' production of waste in Venice province. 
 #' Stochastic Environmental Research and Risk Assessment, 31(1), 23-38.
 #' @examples
-#' library(fdaPDE)
+#' library(fdaPDEmixed)
 #' 
 #' data(horseshoe2D)
 #' boundary_nodes = horseshoe2D$boundary_nodes

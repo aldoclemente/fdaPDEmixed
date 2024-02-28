@@ -28,7 +28,7 @@
 #' via spatial regression with PDE penalization. Journal of the American Statistical Association, 110(511), 1057-1071.}
 #' }
 #' @examples
-#' library(fdaPDE)
+#' library(fdaPDEmixed)
 #' ## Upload the horseshoe2D data
 #' data(horseshoe2D)
 #' boundary_nodes = horseshoe2D$boundary_nodes
@@ -253,7 +253,7 @@ eval.FEM.mixed <- function(FEM.mixed, locations=NULL, incidence_matrix = NULL, s
 #'  Devillers, O. et al. 2001. Walking in a Triangulation, Proceedings of the Seventeenth Annual Symposium on Computational Geometry
 #' @export
 #' @examples
-#' library(fdaPDE)
+#' library(fdaPDEmixed)
 #' ## Upload the horseshoe2D data
 #' data(horseshoe2D)
 #' boundary_nodes = horseshoe2D$boundary_nodes

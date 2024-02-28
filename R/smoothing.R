@@ -152,7 +152,7 @@
 #'  Journal of Statistical Computation and Simulation, 86:13, 2497-2518.}
 #' }
 #' @examples
-#' library(fdaPDE)
+#' library(fdaPDEmixed)
 #'
 #' #### No prior information about anysotropy/non-stationarity (laplacian smoothing) ####
 #' data(horseshoe2D)

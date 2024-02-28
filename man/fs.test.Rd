@@ -27,7 +27,7 @@ Implements a finite area test function based on one proposed by Tim Ramsay (2002
 Simon Wood (2008).
 }
 \examples{
-library(fdaPDE)
+library(fdaPDEmixed)
 
 ## Upload the horseshoe2D data
 data(horseshoe2D)

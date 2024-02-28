@@ -23,7 +23,7 @@ A \code{FEM.time} object. This contains a list with components \code{coeff}, \co
 This function defines a FEM.time object.
 }
 \examples{
-library(fdaPDE)
+library(fdaPDEmixed)
 ## Upload the horseshoe2D data
 data(horseshoe2D)
 

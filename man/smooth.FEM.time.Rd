@@ -133,7 +133,7 @@ the smoothing parameter is equal to \code{lambda[j]}.}
 Space-time regression  with differential regularization. Space-varying covariates can be included in the model. The technique accurately handle data distributed over irregularly shaped domains. Moreover, various conditions can be imposed at the domain boundaries.
 }
 \examples{
-library(fdaPDE)
+library(fdaPDEmixed)
 
 data(horseshoe2D)
 boundary_nodes = horseshoe2D$boundary_nodes

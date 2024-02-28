@@ -68,7 +68,7 @@ convex hull of the points.
 It is also possible to create a mesh.2D from the nodes locations and the connectivity matrix.
 }
 \examples{
-library(fdaPDEISCHIA)
+library(fdaPDEmixed)
 
 ## Upload the quasicirle2D data
 data(quasicircle2D)

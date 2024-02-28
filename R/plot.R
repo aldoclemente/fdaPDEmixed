@@ -15,7 +15,7 @@
 #' @export
 #' @seealso \code{\link{FEM}}, \code{\link{image.FEM}}
 #' @examples
-#' library(fdaPDE)
+#' library(fdaPDEmixed)
 #' ## Upload the horseshoe2D data
 #' data(horseshoe2D)
 #' boundary_nodes = horseshoe2D$boundary_nodes
@@ -117,7 +117,7 @@ if(class(x) != 'FEM.mixed')
 #' @export
 #' @seealso \code{\link{FEM.time}}, \code{\link{image.FEM.time}}
 #' @examples
-#' library(fdaPDE)
+#' library(fdaPDEmixed)
 #' ## Upload the horseshoe2D data
 #' data(horseshoe2D)
 #' boundary_nodes = horseshoe2D$boundary_nodes
@@ -176,7 +176,7 @@ plot.FEM.time = function(x, time_locations = NULL, locations = NULL,
       storage.mode(x$coeff) <- "double"
       storage.mode(x$FLAG_PARABOLIC) <- "integer"
 
-      solution <- .Call("eval_FEM_time_nodes",N,x$mesh_time,time_locations,x$coeff[,lambdaS,lambdaT],x$FLAG_PARABOLIC, PACKAGE = "fdaPDEISCHIA")
+      solution <- .Call("eval_FEM_time_nodes",N,x$mesh_time,time_locations,x$coeff[,lambdaS,lambdaT],x$FLAG_PARABOLIC, PACKAGE = "fdaPDEmixed")
       plot = FEM(solution[1:N],x$FEMbasis)
       plot.FEM(plot,num_refinements,main = paste0("Spatial function in t = ",time_locations),...)
 
@@ -236,7 +236,7 @@ plot.FEM.time = function(x, time_locations = NULL, locations = NULL,
       storage.mode(x$coeff) <- "double"
       storage.mode(x$FLAG_PARABOLIC) <- "integer"
 
-      solution <- .Call("eval_FEM_time_nodes",N,x$mesh_time,time_locations,x$coeff[,lambdaS,lambdaT],x$FLAG_PARABOLIC, PACKAGE = "fdaPDEISCHIA")
+      solution <- .Call("eval_FEM_time_nodes",N,x$mesh_time,time_locations,x$coeff[,lambdaS,lambdaT],x$FLAG_PARABOLIC, PACKAGE = "fdaPDEmixed")
       for(i in 1:length(t))
       {
          plot = FEM(solution[(1+(i-1)*N):(N+(i-1)*N)],x$FEMbasis)
@@ -330,7 +330,7 @@ plot.FEM.time = function(x, time_locations = NULL, locations = NULL,
 #' @usage \method{plot}{mesh.2D}(x, ...)
 #' @export
 #' @examples
-#' library(fdaPDE)
+#' library(fdaPDEmixed)
 #'
 #' ## Upload the quasicirle2D data
 #' data(quasicircle2D)
@@ -362,7 +362,7 @@ plot.mesh.2D<-function(x, ...)
 
 #' @usage \method{plot}{mesh.2.5D}(x, ...)
 #' @examples
-#' library(fdaPDE)
+#' library(fdaPDEmixed)
 #'
 #' ## Upload the hub2.5D the data
 #' data(hub2.5D)
@@ -403,7 +403,7 @@ plot.mesh.2.5D<-function(x,...){
 
 #' @usage \method{plot}{mesh.3D}(x, ...)
 #' @examples
-#' library(fdaPDE)
+#' library(fdaPDEmixed)
 #'
 #' ##Load the matrix nodes and tetrahedrons
 #' data(sphere3Ddata)
@@ -626,7 +626,7 @@ plot.mesh.3D<-function(x,...){
  #' @seealso \code{\link{FEM}} \code{\link{plot.FEM}}
  #' @export
  #' @examples
- #' library(fdaPDE)
+ #' library(fdaPDEmixed)
  #' ## Upload the horseshoe2D data
  #' data(horseshoe2D)
  #' boundary_nodes = horseshoe2D$boundary_nodes
@@ -674,7 +674,7 @@ plot.mesh.3D<-function(x,...){
  #' @seealso \code{\link{FEM.time}} \code{\link{image.FEM.time}}
  #' @export
  #' @examples
- #' library(fdaPDE)
+ #' library(fdaPDEmixed)
  #' ## Upload the horseshoe2D data
  #' data(horseshoe2D)
  #' boundary_nodes = horseshoe2D$boundary_nodes
@@ -722,7 +722,7 @@ plot.mesh.3D<-function(x,...){
    storage.mode(x$coeff) <- "double"
    storage.mode(x$FLAG_PARABOLIC) <- "integer"
 
-   solution <- .Call("eval_FEM_time_nodes",N,x$mesh_time,t,x$coeff[,lambdaS,lambdaT],x$FLAG_PARABOLIC, PACKAGE = "fdaPDEISCHIA")
+   solution <- .Call("eval_FEM_time_nodes",N,x$mesh_time,t,x$coeff[,lambdaS,lambdaT],x$FLAG_PARABOLIC, PACKAGE = "fdaPDEmixed")
    for(i in 1:length(t))
    {
      plot = FEM(solution[(1+(i-1)*N):(N+(i-1)*N)],x$FEMbasis)

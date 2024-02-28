@@ -35,7 +35,7 @@ pointwise evaluations and incidence matrix for areal evaluations.
 The locations and the incidence matrix cannot be both NULL or both provided.
 }
 \examples{
-library(fdaPDE)
+library(fdaPDEmixed)
 ## Upload the horseshoe2D data
 data(horseshoe2D)
 boundary_nodes = horseshoe2D$boundary_nodes

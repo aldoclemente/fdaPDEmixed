@@ -51,7 +51,7 @@
 #' manifolds with an application to neuroimaging. Ann. Appl. Stat., 10(4), pp. 1854-1879.
 #' @export
 #' @examples
-#' library(fdaPDE)
+#' library(fdaPDEmixed)
 #'
 #' ## Load the hub data
 #' data(hub2.5D)

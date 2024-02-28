@@ -27,7 +27,7 @@ Implements a finite area test function based on one proposed by Tim Ramsay (2002
 Simon Wood (2008) in 3D.
 }
 \examples{
-library(fdaPDE)
+library(fdaPDEmixed)
 
 data(horseshoe2.5D)
 mesh = horseshoe2.5D

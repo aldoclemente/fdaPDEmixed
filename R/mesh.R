@@ -28,7 +28,7 @@ triangulate_native <- function(P, PB, PA, S, SB,H, TR, flags) {
                H,
                t(TR),
                flags,
-               PACKAGE="fdaPDEISCHIA")
+               PACKAGE="fdaPDEmixed")
   names(out) <- c("P", "PB", "PA", "T", "S", "SB", "E", "EB","TN", "VP", "VE", "VN", "VA")
   class(out) <- "triangulation"
   return(out)
@@ -89,7 +89,7 @@ triangulate_native <- function(P, PB, PA, S, SB,H, TR, flags) {
 #' }
 #' @export
 #' @examples
-#' library(fdaPDEISCHIA)
+#' library(fdaPDEmixed)
 #'
 #' ## Upload the quasicirle2D data
 #' data(quasicircle2D)
@@ -275,7 +275,7 @@ create.mesh.2D <- function(nodes, nodesattributes = NA, segments = NA, holes = N
 #' These are respectively used for linear (order = 1) and quadratic (order = 2) Finite Elements.}
 #' }
 #' @examples
-#' library(fdaPDEISCHIA)
+#' library(fdaPDEmixed)
 #'
 #' ## Upload the quasicircle2D data
 #' data(quasicircle2D)
@@ -410,7 +410,7 @@ refine.mesh.2D<-function(mesh, minimum_angle = NA, maximum_area = NA, delaunay =
 #' }
 #' @export
 #' @examples
-#' library(fdaPDEISCHIA)
+#' library(fdaPDEmixed)
 #'
 #' ## Upload the hub2.5D the data
 #' data(hub2.5D)
@@ -477,14 +477,14 @@ create.mesh.2.5D<- function(nodes, triangles = NULL, order = 1, nodesattributes 
   out<-NULL
 
   if(order==1 && ncol(triangles) == 3){
-    outCPP <- .Call("CPP_SurfaceMeshHelper", triangles, nodes, PACKAGE = "fdaPDEISCHIA")
+    outCPP <- .Call("CPP_SurfaceMeshHelper", triangles, nodes, PACKAGE = "fdaPDEmixed")
 
     out <- list(nodes=nodes, nodesmarkers=outCPP[[3]], nodesattributes=nodesattributes,
                triangles=triangles+1, segments=segments, segmentsmarkers=segmentsmarkers,
                edges=outCPP[[1]], edgesmarkers=outCPP[[2]], neighbors=outCPP[[4]], holes=holes, order=order)
   }
   else if(order==2 && ncol(triangles) == 6){
-    outCPP <- .Call("CPP_SurfaceMeshHelper", triangles[,1:3], nodes, PACKAGE = "fdaPDEISCHIA")
+    outCPP <- .Call("CPP_SurfaceMeshHelper", triangles[,1:3], nodes, PACKAGE = "fdaPDEmixed")
 
     out <- list(nodes=nodes, nodesmarkers=outCPP[[3]], nodesattributes=nodesattributes,
                 triangles=triangles+1, segments=segments, segmentsmarkers=segmentsmarkers,
@@ -493,7 +493,7 @@ create.mesh.2.5D<- function(nodes, triangles = NULL, order = 1, nodesattributes 
   else if(order==2 && ncol(triangles) == 3){
     print("You set order=2 but passed a matrix of triangles with just 3 columns. The midpoints for each edge will be computed.")
 
-    outCPP <- .Call("CPP_SurfaceMeshOrder2", triangles, nodes, PACKAGE = "fdaPDEISCHIA")
+    outCPP <- .Call("CPP_SurfaceMeshOrder2", triangles, nodes, PACKAGE = "fdaPDEmixed")
 
     out <- list(nodes=rbind(nodes, outCPP[[5]]), nodesmarkers=c(outCPP[[3]], outCPP[[2]]), nodesattributes=nodesattributes,
                 triangles=cbind(triangles+1, outCPP[[6]]), segments=segments, segmentsmarkers=segmentsmarkers,
@@ -521,7 +521,7 @@ create.mesh.2.5D<- function(nodes, triangles = NULL, order = 1, nodesattributes 
 #' @return 3D points projected onto 2.5D triangluar mesh.
 #' @export
 #' @examples
-#' library(fdaPDEISCHIA)
+#' library(fdaPDEmixed)
 #'
 #' ## Upload the hub2.5D the data
 #' data(hub2.5D)
@@ -562,7 +562,7 @@ projection.points.2.5D<-function(mesh, locations) {
   storage.mode(mesh$order) <- "integer"
 
   ## Call C++ function
-  evalmat <- .Call("points_projection", mesh, locations, PACKAGE = "fdaPDEISCHIA")
+  evalmat <- .Call("points_projection", mesh, locations, PACKAGE = "fdaPDEmixed")
 
   #Returning the evaluation matrix
   return(evalmat)
@@ -610,7 +610,7 @@ projection.points.2.5D<-function(mesh, locations) {
 #' }
 #' @export
 #' @examples
-#' library(fdaPDEISCHIA)
+#' library(fdaPDEmixed)
 #'
 #' ##Load the matrix nodes and tetrahedrons
 #' data(sphere3Ddata)
@@ -676,7 +676,7 @@ create.mesh.3D<- function(nodes, tetrahedrons, order = 1, nodesattributes = NULL
   out<-NULL
 
   if(order==1 && ncol(tetrahedrons) == 4){
-    outCPP <- .Call("CPP_VolumeMeshHelper", tetrahedrons, nodes, PACKAGE = "fdaPDEISCHIA")
+    outCPP <- .Call("CPP_VolumeMeshHelper", tetrahedrons, nodes, PACKAGE = "fdaPDEmixed")
 
     out <- list(nodes=nodes, nodesmarkers=outCPP[[3]], nodesattributes=nodesattributes,
                 tetrahedrons=tetrahedrons+1, segments=segments, segmentsmarkers=segmentsmarkers,
@@ -684,7 +684,7 @@ create.mesh.3D<- function(nodes, tetrahedrons, order = 1, nodesattributes = NULL
                 holes=holes, order=order)
   }
   else if(order==2 && ncol(tetrahedrons) == 10){
-    outCPP <- .Call("CPP_VolumeMeshHelper", tetrahedrons[,1:4], nodes, PACKAGE = "fdaPDEISCHIA")
+    outCPP <- .Call("CPP_VolumeMeshHelper", tetrahedrons[,1:4], nodes, PACKAGE = "fdaPDEmixed")
 
     out <- list(nodes=nodes, nodesmarkers=outCPP[[3]], nodesattributes=nodesattributes,
                 tetrahedrons=tetrahedrons+1, segments=segments, segmentsmarkers=segmentsmarkers,
@@ -694,7 +694,7 @@ create.mesh.3D<- function(nodes, tetrahedrons, order = 1, nodesattributes = NULL
   else if(order==2 && ncol(tetrahedrons) == 4){
     print("You set order=2 but passed a matrix of tetrahedrons with just 4 columns. The midpoints for each edge will be computed.")
 
-    outCPP <- .Call("CPP_VolumeMeshOrder2", tetrahedrons, nodes, PACKAGE = "fdaPDEISCHIA")
+    outCPP <- .Call("CPP_VolumeMeshOrder2", tetrahedrons, nodes, PACKAGE = "fdaPDEmixed")
 
     out <- list(nodes=rbind(nodes, outCPP[[5]]), nodesmarkers=c(outCPP[[3]], rep(FALSE, nrow(outCPP[[5]]))), nodesattributes=nodesattributes,
                tetrahedrons=cbind(tetrahedrons+1, outCPP[[6]]), segments=segments, segmentsmarkers=segmentsmarkers,

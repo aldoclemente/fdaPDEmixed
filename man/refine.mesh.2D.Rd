@@ -44,7 +44,7 @@ refine a mesh previously created with \link{create.mesh.2D}. The algorithm can a
 in order to meet the imposed refinement conditions.
 }
 \examples{
-library(fdaPDEISCHIA)
+library(fdaPDEmixed)
 
 ## Upload the quasicircle2D data
 data(quasicircle2D)

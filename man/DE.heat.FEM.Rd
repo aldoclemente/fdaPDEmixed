@@ -35,7 +35,7 @@ for each \code{lambda}. If \code{init = 'CV'} it returns the initial vector asso
 This function implements two methods for the density initialization procedure.
 }
 \examples{
-library(fdaPDE)
+library(fdaPDEmixed)
 
 ## Create a 2D mesh over a squared domain
 Xbound <- seq(-3, 3, length.out = 10)

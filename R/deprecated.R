@@ -665,7 +665,7 @@ R_tricoefCal = function(mesh)
 
 smooth.FEM.basis<-function(locations = NULL, observations, FEMbasis, lambda, covariates = NULL, BC = NULL, GCV = FALSE, CPP_CODE = TRUE)
 {
-  .Deprecated("smooth.FEM", package = "fdaPDE")
+  .Deprecated("smooth.FEM", package = "fdaPDEmixed")
   ans=smooth.FEM(locations=locations,observations=observations,FEMbasis=FEMbasis, covariates=covariates,BC=BC,lambda.selection.criterion = 'grid', DOF.evaluation = NULL, lambda.selection.lossfunction=NULL,lambda=lambda)
   ans
 }
@@ -717,11 +717,11 @@ smooth.FEM.basis<-function(locations = NULL, observations, FEMbasis, lambda, cov
 #'    \item{\code{bary.locations}}{A barycenter information of the given locations if the locations are not mesh nodes.}
 #' }
 #' @description This function implements a spatial regression model with differential regularization; anysotropic case. In particular, the regularizing term involves a second order elliptic PDE, that models the space-variation of the phenomenon. Space-varying covariates can be included in the model. The technique accurately handle data distributed over irregularly shaped domains. Moreover, various conditions can be imposed at the domain boundaries.
-#' @rdname fdaPDE-deprecated
+#' @rdname fdaPDEmixed-deprecated
 #' @export
 smooth.FEM.PDE.basis<-function(locations = NULL, observations, FEMbasis, lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV = FALSE, CPP_CODE = TRUE)
 {
-  .Deprecated("smooth.FEM", package = "fdaPDE")
+  .Deprecated("smooth.FEM", package = "fdaPDEmixed")
   ans=smooth.FEM(locations=locations,observations=observations,FEMbasis=FEMbasis,PDE_parameters=PDE_parameters,covariates=covariates,BC=BC,lambda.selection.criterion = 'grid', DOF.evaluation = NULL, lambda.selection.lossfunction=NULL,lambda=lambda)
   ans
 }
@@ -785,7 +785,7 @@ smooth.FEM.PDE.basis<-function(locations = NULL, observations, FEMbasis, lambda,
 
 smooth.FEM.PDE.sv.basis<-function(locations = NULL, observations, FEMbasis, lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV = FALSE, CPP_CODE = TRUE)
 {
-  .Deprecated("smooth.FEM", package = "fdaPDE")
+  .Deprecated("smooth.FEM", package = "")
   ans=smooth.FEM(locations=locations,observations=observations,FEMbasis=FEMbasis,PDE_parameters=PDE_parameters,covariates=covariates,BC=BC,lambda.selection.criterion = 'grid', DOF.evaluation = NULL, lambda.selection.lossfunction=NULL,lambda=lambda)
   ans
 }
