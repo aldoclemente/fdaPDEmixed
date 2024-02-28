@@ -3,4 +3,5 @@
 *.dll
 *.so
 .Rproj.user
+.Rhistory
 fdaPDEISCHIA.Rproj

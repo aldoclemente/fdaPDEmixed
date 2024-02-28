@@ -38,7 +38,8 @@ LinkingTo:
 	RcppEigen
 Suggests: 
     MASS,
-    testthat
+    testthat, 
+    plotly
 Description: An implementation of regression models with partial differential regularizations, making use of the Finite Element Method. The models efficiently handle data distributed over irregularly shaped domains and can comply with various conditions at the boundaries of the domain. A priori information about the spatial structure of the phenomenon under study can be incorporated in the model via the differential regularization.
 License: CC BY-NC-SA 4.0
 Copyright: See the individual source files for copyrights information
