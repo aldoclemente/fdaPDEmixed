@@ -15,3 +15,4 @@
 ^src/core/\.clang-format$
 ^src/core/test$
 ^fdaPDEISCHIA\.Rproj$
+^fdaPDEmixed\.Rproj$

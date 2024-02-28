@@ -10,14 +10,14 @@ then, to install the latest stable version of `femR`, you can either:
 
 <!-- -->
 
-    devtools::install_github("aldoclemente/fdaPDEISCHIA", ref="main") 
+    devtools::install_github("aldoclemente/fdaPDEmixed", ref="main") 
 
 2.  clone this repository and install. From a terminal, execute
 
 <!-- -->
 
-    git clone -b main git@github.com:aldoclemente/fdaPDEISCHIA.git 
-    cd path/to/fdaPDEISCHIA 
+    git clone -b main git@github.com:aldoclemente/fdaPDEmixed.git 
+    cd path/to/fdaPDEmixed 
 
 and install the package from the R console
 
