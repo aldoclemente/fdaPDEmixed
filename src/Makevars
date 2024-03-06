@@ -5,8 +5,8 @@ CXX_STD = CXX17
 
 #This flag hides those ugly EIGEN warnings
 #It has been commented out because it is not admissible on CRAN  
-PKG_CXXFLAGS =  -w -Wfatal-errors # -Wno-ignored-attributes 
-PKG_CPPFLAGS = -I"C:/Users/ischi/R/win-library/3.6/RcppEigen/include"
+PKG_CXXFLAGS = -Wno-ignored-attributes  # -w -Wfatal-errors # -Wno-ignored-attributes 
+# PKG_CPPFLAGS = -I"C:/Users/ischi/R/win-library/3.6/RcppEigen/include"
 
 # Group the source files
 SOURCES =  $(wildcard */*.cpp) #subfolders cpp files
