@@ -62,3 +62,14 @@ sample_locations <- function(mesh, N){
   }
   return(locations[sample(1:nrow(locations), size=N),])
 }
+
+compute_limits <- function(x){
+  mesh <- x$FEMbasis$mesh
+  coeff <- apply(mesh$triangles, MARGIN=1, FUN = function(edge){
+    mean(x$coeff[edge,])
+  })
+  limits = c(1e10, -1e10)
+  limits[1] = min(coeff, limits[1])
+  limits[2] = max(coeff, limits[2])
+  return(limits)
+}

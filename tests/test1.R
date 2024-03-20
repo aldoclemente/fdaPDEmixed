@@ -10,7 +10,7 @@ if(!require(mgcv)){
 if(!require(rstudioapi)) install.packages("rstudioapi")
 # ------------------------------------------------------------------------------
 library(fdaPDEmixed)
-library(mgcv)
+#library(mgcv)
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 source("utils.R")
 
@@ -442,9 +442,106 @@ boxplot(data.frame(fdaPDE=errors$fdaPDE$response,
         main = "fitted", col="white")
 
 
-# ------------------------------------------------------------------------------
+# plot mean estimates n = 250  -------------------------------------------------
 
+date_ = "2024-03-06-14_47_06"
+folder.name = paste("data/test_1/",date_,"/",sep="")
+j = 2
+nnodes <- nrow(mesh$nodes)
+locations <- sample_locations(mesh, n_obs[j])
+nlocs <- nrow(locations)
+X1 = cbind( Cov1(locations[,1], locations[,2]), rnorm(nlocs, mean = 0, sd = 2))
+X2 = cbind( Cov1(locations[,1], locations[,2]), rnorm(nlocs, mean = 0, sd = 2))
+X3 = cbind( Cov1(locations[,1], locations[,2]), rnorm(nlocs, mean = 0, sd = 2))
 
+func1 = fs.test.time(x=locations[,1], y=locations[,2],  t=rep(0.5, nlocs))
+func2 = fs.test.time(x=locations[,1], y=locations[,2],  t=rep(1, nlocs))
+func3 = fs.test.time(x=locations[,1], y=locations[,2],  t=rep(1.5, nlocs))
+test.func1 = fs.test.time(x=test.locations[,1], y=test.locations[,2],  t=rep(0.5, nrow(test.locations)))
+test.func2 = fs.test.time(x=test.locations[,1], y=test.locations[,2],  t=rep(1, nrow(test.locations)))
+test.func3 = fs.test.time(x=test.locations[,1], y=test.locations[,2],  t=rep(1.5, nrow(test.locations)))
 
+estimates <- list(
+  f_1 = matrix(0, nrow=nnodes,ncol=1),
+  f_2 = matrix(0, nrow=nnodes,ncol=1),
+  f_3 = matrix(0, nrow=nnodes,ncol=1)
+)
+lambda= 10^seq(-2,1,by=0.1)
+for(i in 1:n_sim){
+  # V == Cov1
+  exact1 <- X1%*% betas + func1 + X1[,1] * b[1] 
+  obs1 <- exact1  # + rnorm(nlocs,mean=0,sd=0.05*diff(range(exact1)))
+  
+  exact2 <- X2%*% betas + func2 + X2[,1] * b[2]
+  obs2 <- exact2  # + rnorm(nlocs,mean=0,sd=0.05*diff(range(exact2)))
+  
+  exact3 <- X3%*% betas + func3 + X3[,1] * b[3] 
+  obs3 <- exact3  # + rnorm(nlocs,mean=0,sd=0.05*diff(range(exact3)))
+  
+  exact <- c(exact1, exact2, exact3)
+  observations <- c(obs1, obs2, obs3)
+  observations <- observations + rnorm(nlocs*3, mean=0, sd=0.05*(diff(range(c(func1, func2, func3)))))
+  observations <- matrix(observations, nrow=nlocs, ncol=3)
+  X = rbind(X1, X2, X3)
+  # fdaPDE ---------------------------------------------------------------------
+  invisible(capture.output(output_fdaPDE <- fdaPDEmixed::smooth.FEM.mixed(observations = observations, locations = locations,
+                                                                          covariates = X, random_effect = c(1,2),
+                                                                          FEMbasis = FEMbasis, lambda = lambda, 
+                                                                          lambda.selection.criterion = "grid", 
+                                                                          lambda.selection.lossfunction = "GCV",
+                                                                          DOF.evaluation = "exact", FLAG_ITERATIVE = TRUE)))
+  
+  best_lambda <- output_fdaPDE$bestlambda
+  estimates$f_1 <- estimates$f_1 + output_fdaPDE$fit.FEM.mixed$coeff[1:nnodes,best_lambda] / n_sim
+  estimates$f_2 <- estimates$f_2 + output_fdaPDE$fit.FEM.mixed$coeff[(nnodes+1):(2*nnodes),best_lambda] / n_sim
+  estimates$f_3 <- estimates$f_3 + output_fdaPDE$fit.FEM.mixed$coeff[(2*nnodes+1):(3*nnodes),best_lambda] / n_sim
+}
 
+save(estimates, file=paste0(folder.name, "n_obs_250_estimates.RData"))
+     
+library(plotly)
+options(warn=-1)
+mesh.ref = refine.mesh.2D(mesh, minimum_angle = 30, maximum_area = 0.0025)
+nnodes <- nrow(mesh.ref$nodes)
+func1 = fs.test.time(x=mesh.ref$nodes[,1], y=mesh.ref$nodes[,2],  t=rep(0.5, nnodes))
+func2 = fs.test.time(x=mesh.ref$nodes[,1], y=mesh.ref$nodes[,2],  t=rep(1, nnodes))
+func3 = fs.test.time(x=mesh.ref$nodes[,1], y=mesh.ref$nodes[,2],  t=rep(1.5, nnodes))
+FEMbasis.ref <- create.FEM.basis(mesh.ref)
+fig1 <- contour.FEM(FEM(coeff = func1, FEMbasis.ref))
+fig2 <- contour.FEM(FEM(coeff = func2, FEMbasis.ref))
+fig3 <- contour.FEM(FEM(coeff = func3, FEMbasis.ref))
+fig1 <- fig1 %>% layout(scene = list(
+  camera = list(
+    eye = list(x = 0, y = -0.01,  z = 2))))
+fig2 <- fig2 %>% layout(scene = list(
+  camera = list(
+    eye = list(x = 0, y = -0.01,  z = 2))))
+fig3 <- fig3 %>% layout(scene = list(
+  camera = list(
+    eye = list(x = 0, y = -0.01,  z = 2))))
+save_image(fig1, paste0(folder.name,"true_f1.pdf"))
+save_image(fig2, paste0(folder.name,"true_f2.pdf"))
+save_image(fig3, paste0(folder.name,"true_f3.pdf"))
 
+estimates_f1 <- eval.FEM(FEM(coeff = estimates$f_1, FEMbasis), locations = mesh.ref$nodes)
+estimates_f2 <- eval.FEM(FEM(coeff = estimates$f_2, FEMbasis), locations = mesh.ref$nodes)
+estimates_f3 <- eval.FEM(FEM(coeff = estimates$f_3, FEMbasis), locations = mesh.ref$nodes)
+
+fig1 <- contour.FEM(FEM(coeff = estimates_f1, FEMbasis.ref), 
+                    limits = compute_limits(FEM(coeff = func1, FEMbasis.ref)))
+fig2 <- contour.FEM(FEM(coeff = estimates_f2, FEMbasis.ref), 
+                    limits = compute_limits(FEM(coeff = func2, FEMbasis.ref)))
+fig3 <- contour.FEM(FEM(coeff = estimates_f3, FEMbasis.ref),
+                    limits = compute_limits(FEM(coeff = func3, FEMbasis.ref)))
+fig1 <- fig1 %>% layout(scene = list(
+  camera = list(
+    eye = list(x = 0, y = -0.01,  z = 2))))
+fig2 <- fig2 %>% layout(scene = list(
+  camera = list(
+    eye = list(x = 0, y = -0.01,  z = 2))))
+fig3 <- fig3 %>% layout(scene = list(
+  camera = list(
+    eye = list(x = 0, y = -0.01,  z = 2))))
+save_image(fig1, paste0(folder.name,"estimate_f1.pdf"))
+save_image(fig2, paste0(folder.name,"estimate_f2.pdf"))
+save_image(fig3, paste0(folder.name,"estimate_f3.pdf"))
