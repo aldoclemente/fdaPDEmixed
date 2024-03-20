@@ -316,6 +316,10 @@ for(j in 1:length(n_obs)){
 }
 
 # post-proc --------------------------------------------------------------------
+n_sim <- 30
+n_obs <- c(100, 250, 500, 1000)
+betas <- as.matrix(c(3,0.5))
+b <- as.matrix( c(-5, 0, 5) )
 estimates <- data.frame(beta1 = matrix(nrow = n_sim * length(n_obs), ncol = 1),
                         beta2 = matrix(nrow = n_sim * length(n_obs), ncol = 1),
                         beta1_rmse = matrix(nrow = n_sim * length(n_obs), ncol = 1),
@@ -326,6 +330,9 @@ estimates <- data.frame(beta1 = matrix(nrow = n_sim * length(n_obs), ncol = 1),
                         response_rmse = matrix(nrow = n_sim * length(n_obs), ncol = 1),
                         n_obs = as.factor(rep(n_obs, each=n_sim))
                        )
+
+date_ = "2024-03-06-14_47_06"
+folder.name = paste("data/test_1/",date_,"/",sep="")
 {
 load(file = "data/test_1/2024-03-06-14_47_06/n_obs_100.RData")
 estimates$beta1[1:n_sim] <- results$fdaPDE$beta_1
@@ -369,32 +376,37 @@ estimates$response_rmse[(3*n_sim+1):(4*n_sim)] <- errors$fdaPDE$response
 }
 
 {
-pdf(paste0(folder.name, "test1.pdf"))
+mai_ = par("mai")
+mai_[2] = mai_[2] + 0.075
+pdf(paste0(folder.name, "test_1.pdf"), family = "serif", width = 7, height = 7)
+par(mai=mai_)
 boxplot(estimates$beta1_rmse ~ estimates$n_obs,ylab="RMSE", xlab="observations",
-        main =expression(beta[1]), col="white")
-
+        main =expression(beta[1]), col="white",cex.lab = 2, cex.axis = 2, cex.main = 2)
+par(mai=mai_)
 boxplot(estimates$beta2_rmse ~ estimates$n_obs,ylab="RMSE", xlab="observations",
-        main =expression(beta[2]), col="white")
-
+        main =expression(beta[2]), col="white",cex.lab = 2, cex.axis = 2, cex.main = 2)
+par(mai=mai_)
 boxplot(estimates$beta1 ~ estimates$n_obs,
-        main =expression(hat(beta)[1]), col="white", ylab="", xlab="observations")
+        main =expression(hat(beta)[1]), col="white", ylab="", xlab="observations",
+        cex.lab = 2, cex.axis = 2, cex.main = 2)
 abline(h=betas[1], lty=2, lwd=3, col="red")
-
+par(mai=mai_)
 boxplot(estimates$beta2 ~ estimates$n_obs,
-        main =expression(hat(beta)[2]), col="white", ylab="", xlab="observations")
+        main =expression(hat(beta)[2]), col="white", ylab="", xlab="observations",
+        cex.lab = 2, cex.axis = 2, cex.main = 2)
 abline(h=betas[2], lty=2, lwd=3, col="red")
-
+par(mai=mai_)
 boxplot(estimates$f1_rmse ~ estimates$n_obs,
         ylab="RMSE", xlab="observations",
-        main =expression(f[1]), col="white")
-
+        main =expression(f[1]), col="white",cex.lab = 2, cex.axis = 2, cex.main = 2)
+par(mai=mai_)
 boxplot(estimates$f2_rmse ~ estimates$n_obs,
         ylab="RMSE", xlab="observations",
-        main =expression(f[2]), col="white")
-
+        main =expression(f[2]), col="white",cex.lab = 2, cex.axis = 2, cex.main = 2)
+par(mai=mai_)
 boxplot(estimates$f3_rmse ~ estimates$n_obs,
         ylab="RMSE", xlab="observations",
-        main =expression(f[3]), col="white")
+        main =expression(f[3]), col="white",cex.lab = 2, cex.axis = 2, cex.main = 2)
 dev.off()
 }
 # ------------------------------------------------------------------------------
@@ -402,44 +414,44 @@ dev.off()
 boxplot(data.frame(fdaPDE=errors$fdaPDE$f_2,
                    mgcv=errors$mgcv$f_2), 
         ylab="RMSE", xlab="observations",
-        main =expression(f[2]), col="white")
+        main =expression(f[2]), col="white",cex.lab = 2, cex.axis = 2, cex.main = 2)
 boxplot(data.frame(fdaPDE=errors$fdaPDE$f_3,
                    mgcv=errors$mgcv$f_3), 
         ylab="RMSE", xlab="observations",
-        main =expression(f[3]), col="white")
+        main =expression(f[3]), col="white",cex.lab = 2, cex.axis = 2, cex.main = 2)
 
 boxplot(data.frame(fdaPDE=errors$fdaPDE$beta_1,
                    mgcv=errors$mgcv$beta_1), 
         ylab="RMSE", xlab="observations",
-        main =expression(beta[1]), col="white")
+        main =expression(beta[1]), col="white",cex.lab = 2, cex.axis = 2, cex.main = 2)
 
 boxplot(data.frame(fdaPDE=errors$fdaPDE$beta_2,
                    mgcv=errors$mgcv$beta_2), 
         ylab="RMSE",
-        main =expression(beta[2]), col="white")
+        main =expression(beta[2]), col="white",cex.lab = 2, cex.axis = 2, cex.main = 2)
 
 boxplot(data.frame(fdaPDE=results$fdaPDE$beta_2,
                    mgcv=results$mgcv$beta_2),
-        main =expression(hat(beta)[2]), col="white")
+        main =expression(hat(beta)[2]), col="white",cex.lab = 2, cex.axis = 2, cex.main = 2)
 abline(h=betas[2], lty=2, lwd=3, col="red")
 
 boxplot(data.frame(fdaPDE=errors$fdaPDE$f_1,
                    mgcv=errors$mgcv$f_1), 
         ylab="RMSE",
-        main =expression(f[1]), col="white")
+        main =expression(f[1]), col="white",cex.lab = 2, cex.axis = 2, cex.main = 2)
 boxplot(data.frame(fdaPDE=errors$fdaPDE$f_2,
                    mgcv=errors$mgcv$f_2), 
         ylab="RMSE",
-        main =expression(f[2]), col="white")
+        main =expression(f[2]), col="white",cex.lab = 2, cex.axis = 2, cex.main = 2)
 boxplot(data.frame(fdaPDE=errors$fdaPDE$f_3,
                    mgcv=errors$mgcv$f_3), 
         ylab="RMSE",
-        main =expression(f[3]), col="white")
+        main =expression(f[3]), col="white",cex.lab = 2, cex.axis = 2, cex.main = 2)
 
 boxplot(data.frame(fdaPDE=errors$fdaPDE$response,
                    mgcv=errors$mgcv$response), 
         ylab="RMSE",
-        main = "fitted", col="white")
+        main = "fitted", col="white",cex.lab = 2, cex.axis = 2, cex.main = 2)
 
 
 # plot mean estimates n = 250  -------------------------------------------------
