@@ -72,36 +72,31 @@ compute_limits <- function(x){
   limits[1] = min(coeff, limits[1])
   limits[2] = max(coeff, limits[2])
   return(limits)
+}
 
 plot.mesh.2D <- function(x, ...){
+  plot_data <- data.frame(  X=x$nodes[,1], 
+                            Y=x$nodes[,2],
+                            Z=rep(0,times=nrow(x$nodes)))
+  I=x$triangles[,1]-1
+  J=x$triangles[,2]-1
+  K=x$triangles[,3]-1
 fig <- plot_ly(...) %>% 
   add_markers(x = x$nodes[,1],
               y = x$nodes[,2],
-              color = I('black'), size = I(1),
-              hoverinfo = 'text',
-              text = paste('</br><b> Coordinates:', round(x$nodes[,1],2),
-                           round(x$nodes[,2],2)),
-              showlegend = T,
-              visible = T) %>%
+              color = I('black'), size = I(1)) %>%
   add_segments(x = x$nodes[x$edges[,1],1],
                y = x$nodes[x$edges[,1],2],
                xend = x$nodes[x$edges[,2],1],
                yend = x$nodes[x$edges[,2],2], 
                color = I('black'), size = I(1),
                showlegend = F) %>%
-  layout(
+  layout(scene = list(
+    aspectratio=list(x=1,y=1)), 
     xaxis = list(
-      title = '',
-      showgrid = F,
-      zeroline = F,
-      showticklabels = F
-    ),
+      title = '', showgrid = F, zeroline = F, showticklabels = F),
     yaxis = list(
-      title = '',
-      showgrid = F,
-      zeroline = F,
-      showticklabels = F
-    ))
+      title = '', showgrid = F, zeroline = F, showticklabels = F)
+    )
   fig
-
 }
