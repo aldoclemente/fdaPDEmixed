@@ -545,3 +545,15 @@ fig3 <- fig3 %>% layout(scene = list(
 save_image(fig1, paste0(folder.name,"estimate_f1.pdf"))
 save_image(fig2, paste0(folder.name,"estimate_f2.pdf"))
 save_image(fig3, paste0(folder.name,"estimate_f3.pdf"))
+
+fig_cov1 <- contour.FEM(FEM(coeff= Cov1(mesh.ref$nodes[,1], mesh.ref$nodes[,2]), FEMbasis.ref))
+fig_cov1 <- fig_cov1 %>% layout(scene = list(
+  camera = list(
+    eye = list(x = 0, y = -0.01,  z = 2))))
+
+fig_cov2 <- contour.FEM(FEM(coeff= rnorm(nrow(mesh.ref$nodes), mean = 0, sd = 2), FEMbasis.ref))
+fig_cov2 <- fig_cov2 %>% layout(scene = list(
+  camera = list(
+    eye = list(x = 0, y = -0.01,  z = 2))))
+save_image(fig_cov1, paste0(folder.name,"cov_1.pdf"))
+save_image(fig_cov2, paste0(folder.name,"cov_2.pdf"))
