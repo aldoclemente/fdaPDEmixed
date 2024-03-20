@@ -72,4 +72,36 @@ compute_limits <- function(x){
   limits[1] = min(coeff, limits[1])
   limits[2] = max(coeff, limits[2])
   return(limits)
+
+plot.mesh.2D <- function(x, ...){
+fig <- plot_ly(...) %>% 
+  add_markers(x = x$nodes[,1],
+              y = x$nodes[,2],
+              color = I('black'), size = I(1),
+              hoverinfo = 'text',
+              text = paste('</br><b> Coordinates:', round(x$nodes[,1],2),
+                           round(x$nodes[,2],2)),
+              showlegend = T,
+              visible = T) %>%
+  add_segments(x = x$nodes[x$edges[,1],1],
+               y = x$nodes[x$edges[,1],2],
+               xend = x$nodes[x$edges[,2],1],
+               yend = x$nodes[x$edges[,2],2], 
+               color = I('black'), size = I(1),
+               showlegend = F) %>%
+  layout(
+    xaxis = list(
+      title = '',
+      showgrid = F,
+      zeroline = F,
+      showticklabels = F
+    ),
+    yaxis = list(
+      title = '',
+      showgrid = F,
+      zeroline = F,
+      showticklabels = F
+    ))
+  fig
+
 }

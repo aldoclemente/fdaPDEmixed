@@ -557,3 +557,6 @@ fig_cov2 <- fig_cov2 %>% layout(scene = list(
     eye = list(x = 0, y = -0.01,  z = 2))))
 save_image(fig_cov1, paste0(folder.name,"cov_1.pdf"))
 save_image(fig_cov2, paste0(folder.name,"cov_2.pdf"))
+
+fig_mesh <- plot(mesh)
+save_image(fig_mesh, paste0(folder.name, "Cshaped.pdf"))
