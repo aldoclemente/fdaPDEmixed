@@ -81,22 +81,78 @@ plot.mesh.2D <- function(x, ...){
   I=x$triangles[,1]-1
   J=x$triangles[,2]-1
   K=x$triangles[,3]-1
-fig <- plot_ly(...) %>% 
-  add_markers(x = x$nodes[,1],
-              y = x$nodes[,2],
-              color = I('black'), size = I(1)) %>%
-  add_segments(x = x$nodes[x$edges[,1],1],
-               y = x$nodes[x$edges[,1],2],
-               xend = x$nodes[x$edges[,2],1],
-               yend = x$nodes[x$edges[,2],2], 
-               color = I('black'), size = I(1),
-               showlegend = F) %>%
-  layout(scene = list(
-    aspectratio=list(x=1,y=1)), 
-    xaxis = list(
-      title = '', showgrid = F, zeroline = F, showticklabels = F),
-    yaxis = list(
-      title = '', showgrid = F, zeroline = F, showticklabels = F)
+  fig <- plot_ly(...) %>% 
+    add_markers(x = x$nodes[,1],
+                y = x$nodes[,2],
+                color = I('black'), size = I(1)) %>%
+    add_segments(x = x$nodes[x$edges[,1],1],
+                 y = x$nodes[x$edges[,1],2],
+                 xend = x$nodes[x$edges[,2],1],
+                 yend = x$nodes[x$edges[,2],2], 
+                 color = I('black'), size = I(1),
+                 showlegend = F) %>%
+    layout(scene = list(
+      aspectratio=list(x=1,y=1)), 
+      xaxis = list(
+        title = '', showgrid = F, zeroline = F, showticklabels = F),
+      yaxis = list(
+        title = '', showgrid = F, zeroline = F, showticklabels = F)
     )
   fig
+}
+
+plot.FEM.2.5D <- function(x, limits=NULL, ...){
+  mesh <- x$FEMbasis$mesh
+  plot_data <- data.frame(  X=mesh$nodes[,1], 
+                            Y=mesh$nodes[,2],
+                            Z=mesh$nodes[,3],
+                            coeff =x$coeff[1:nrow(mesh$nodes)])
+  
+  coeff <- apply(mesh$triangles, MARGIN=1, FUN = function(edge){
+    mean(x$coeff[edge,])
+  })
+  I=x$triangles[,1]-1
+  J=x$triangles[,2]-1
+  K=x$triangles[,3]-1
+  if(is.null(limits)) limits = c(min(coeff), max(coeff))
+  cmin = limits[1]; cmax=limits[2]
+  
+  fig<- plot_ly(plot_data, x=~X, y=~Y, z=~Z,
+                i = I, j = J, k = K, cmin = limits[1], cmax=limits[2],
+                intensity=~coeff, color=~coeff, type="mesh3d", 
+                colorbar=list(title=""), ...) %>%
+    layout(scene = list(
+      aspectmode = "data", 
+      xaxis = list(
+        title = '', showgrid = F, zeroline = F, showticklabels = F),
+      yaxis = list(
+        title = '', showgrid = F, zeroline = F, showticklabels = F),
+      zaxis = list(
+        title = '', showgrid = F, zeroline = F, showticklabels = F),
+      camera = list(
+        eye = list(x = 0, y = -0.01,  z = 1.25)))) %>%
+    colorbar(len = 1, title="")
+}
+
+plot.mesh.2.5D <- function(x, ...){
+  plot_data <- data.frame(  X=x$nodes[,1], 
+                            Y=x$nodes[,2],
+                            Z=x$nodes[,3])
+  I=x$triangles[,1]-1
+  J=x$triangles[,2]-1
+  K=x$triangles[,3]-1
+  
+  plot_ly(plot_data, x = ~X, y = ~Y, z = ~Z, 
+          i = I, j = J, k = K, type = 'mesh3d', facecolor = "lightgray", vertexcolor="black") %>%
+    layout(scene = list(
+      aspectmode = "data", 
+      xaxis = list(
+        title = '', showgrid = F, zeroline = F, showticklabels = F),
+      yaxis = list(
+        title = '', showgrid = F, zeroline = F, showticklabels = F),
+      zaxis = list(
+        title = '', showgrid = F, zeroline = F, showticklabels = F),
+      camera = list(
+        eye = list(x = 0, y = -0.01,  z = 1.25)))) %>%
+    colorbar(len = 1, title="")
 }

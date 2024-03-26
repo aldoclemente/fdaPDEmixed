@@ -334,7 +334,7 @@ estimates <- data.frame(beta1 = matrix(nrow = n_sim * length(n_obs), ncol = 1),
 date_ = "2024-03-06-14_47_06"
 folder.name = paste("data/test_1/",date_,"/",sep="")
 {
-load(file = "data/test_1/2024-03-06-14_47_06/n_obs_100.RData")
+load(file = paste0("data/test_1/", date_, "n_obs_100.RData"))
 estimates$beta1[1:n_sim] <- results$fdaPDE$beta_1
 estimates$beta2[1:n_sim] <- results$fdaPDE$beta_2
 estimates$beta1_rmse[1:n_sim] <- errors$fdaPDE$beta_1
@@ -344,7 +344,7 @@ estimates$f2_rmse[1:n_sim] <- errors$fdaPDE$f_2
 estimates$f3_rmse[1:n_sim] <- errors$fdaPDE$f_3
 estimates$response_rmse[1:n_sim] <- errors$fdaPDE$response
 
-load(file = "data/test_1/2024-03-06-14_47_06/n_obs_250.RData")
+load(file = paste0("data/test_1/", date_, "n_obs_250.RData"))
 estimates$beta1[(n_sim+1):(2*n_sim)] <- results$fdaPDE$beta_1
 estimates$beta2[(n_sim+1):(2*n_sim)] <- results$fdaPDE$beta_2
 estimates$beta1_rmse[(n_sim+1):(2*n_sim)] <- errors$fdaPDE$beta_1
@@ -354,7 +354,7 @@ estimates$f2_rmse[(n_sim+1):(2*n_sim)] <- errors$fdaPDE$f_2
 estimates$f3_rmse[(n_sim+1):(2*n_sim)] <- errors$fdaPDE$f_3
 estimates$response_rmse[(n_sim+1):(2*n_sim)] <- errors$fdaPDE$response
 
-load(file = "data/test_1/2024-03-06-14_47_06/n_obs_500.RData")
+load(file = paste0("data/test_1/", date_, "n_obs_500.RData"))
 estimates$beta1[(2*n_sim+1):(3*n_sim)] <- results$fdaPDE$beta_1
 estimates$beta2[(2*n_sim+1):(3*n_sim)] <- results$fdaPDE$beta_2
 estimates$beta1_rmse[(2*n_sim+1):(3*n_sim)] <- errors$fdaPDE$beta_1
@@ -364,7 +364,7 @@ estimates$f2_rmse[(2*n_sim+1):(3*n_sim)] <- errors$fdaPDE$f_2
 estimates$f3_rmse[(2*n_sim+1):(3*n_sim)] <- errors$fdaPDE$f_3
 estimates$response_rmse[(2*n_sim+1):(3*n_sim)] <- errors$fdaPDE$response
 
-load(file = "data/test_1/2024-03-06-14_47_06/n_obs_1000.RData")
+load(file = paste0("data/test_1/", date_, "n_obs_1000.RData"))
 estimates$beta1[(3*n_sim+1):(4*n_sim)] <- results$fdaPDE$beta_1
 estimates$beta2[(3*n_sim+1):(4*n_sim)] <- results$fdaPDE$beta_2
 estimates$beta1_rmse[(3*n_sim+1):(4*n_sim)] <- errors$fdaPDE$beta_1
