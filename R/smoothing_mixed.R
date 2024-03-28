@@ -240,16 +240,13 @@ smooth.FEM.mixed <- function(locations = NULL, observations, FEMbasis,
   indBeta <- 1
   indBi <- 1
 
-  for (i in 1:q)
-  {
+  for (i in 1:q){
     if (!is.element(i, random_effect)) { # beta as it is
       beta[i, ] <- betaPrime[indBeta, , drop = FALSE]
       indBeta <- indBeta + 1
-    }
-    else { # convert beta prime to original prime
+    }else { # convert beta prime to original prime
       temp <- numeric(length(lambda)) # it initializes all to 0
-      for (j in 1:num_units)
-      {
+      for (j in 1:num_units){
         temp <- temp + b_iPrime[indBi + (j - 1) * p, ]
       }
       beta[i, ] <- temp / num_units
@@ -259,8 +256,7 @@ smooth.FEM.mixed <- function(locations = NULL, observations, FEMbasis,
   b_i <- matrix(0, nrow = num_units * p, ncol = length(lambda))
   if (p != 0) {
     indRanEff <- 1 # this index will be cycled according to random_effect elements
-    for (i in 1:(num_units * p))
-    {
+    for (i in 1:(num_units * p)){
       b_i[i, ] <- b_iPrime[i, ] - beta[random_effect[ifelse(indRanEff != 0, indRanEff, p)], ]
       indRanEff <- (indRanEff + 1) %% p
     }
