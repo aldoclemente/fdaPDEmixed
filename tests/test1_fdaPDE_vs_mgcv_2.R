@@ -587,11 +587,8 @@ for(i in 1:n_sim){
                      type="terms", terms="s(x,y):fac3")
   estimates$mgcv$f_3 <- estimates$mgcv$f_3 + (tmp + output_mgcv$coefficients[5])/ n_sim 
 }
-
-which(is.na(estimates$mgcv$f_1))
-which(is.na(estimates$mgcv$f_2))
-which(is.na(estimates$mgcv$f_3))
-
+date_ <- "2024-04-05-11_26_24"
+folder.name = paste("data/test_1/",date_,"/",sep="")
 save(estimates, file=paste0(folder.name, "n_obs_", n_obs[j],"_estimates.RData"))
 
 library(plotly)
