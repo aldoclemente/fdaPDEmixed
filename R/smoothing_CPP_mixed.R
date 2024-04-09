@@ -1,6 +1,6 @@
 CPP_smooth.FEM.mixed <- function(locations, observations, FEMbasis, covariates, ndim, mydim, BC, num_units, random_effect, incidence_matrix, areal.data.avg, search, bary.locations, optim, lambda, DOF.stochastic.realizations, DOF.stochastic.seed, DOF.matrix, GCV.inflation.factor, lambda.optimization.tolerance, FLAG_ITERATIVE, threshold, max.steps, threshold_residual, verbose) {
+  
   # Indexes in C++ starts from 0, in R from 1, opportune transformation
-
   FEMbasis$mesh$triangles <- FEMbasis$mesh$triangles - 1
   FEMbasis$mesh$edges <- FEMbasis$mesh$edges - 1
   FEMbasis$mesh$neighbors[FEMbasis$mesh$neighbors != -1] <- FEMbasis$mesh$neighbors[FEMbasis$mesh$neighbors != -1] - 1

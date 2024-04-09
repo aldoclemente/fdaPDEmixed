@@ -140,7 +140,6 @@ extern "C"
 	{
 		// Set input data
 		OptimizationData optimizationData(Roptim, Rlambda, Rnrealizations, Rseed, RDOF_matrix, Rtune, Rsct);
-
 		UInt mydim = INTEGER(Rmydim)[0];
 		UInt ndim = INTEGER(Rndim)[0];
 		int p_ = Rf_length(RRandomEffect);

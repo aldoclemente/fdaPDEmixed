@@ -13,9 +13,9 @@
 
 template <typename InputHandler, UInt ORDER, UInt mydim, UInt ndim>
 SEXP regression_skeleton_mixed(InputHandler &regressionData, OptimizationData optimizationData, SEXP Rmesh)
-{
-	MeshHandler<ORDER, mydim, ndim> mesh(Rmesh, regressionData.getSearch());
-	MixedFERegression<InputHandler> regression(regressionData, optimizationData, mesh.num_nodes());
+{ 
+  MeshHandler<ORDER, mydim, ndim> mesh(Rmesh, regressionData.getSearch());
+  MixedFERegression<InputHandler> regression(regressionData, optimizationData, mesh.num_nodes());
 	regression.preapply(mesh); // preliminary apply (preapply) to store all problem matrices
 	if (regression.isIter())
 	{

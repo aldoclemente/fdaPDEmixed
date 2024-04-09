@@ -208,9 +208,18 @@ smooth.FEM.mixed <- function(locations = NULL, observations, FEMbasis,
     bigsol <- NULL
     stop("still to be reimplemented")
   }
-  else if (class(FEMbasis$mesh) == "mesh.3D") {
+  else if (class(FEMbasis$mesh) == "mesh.3D" & is.null(PDE_parameters)) {
     bigsol <- NULL
-    stop("still to be reimplemented")
+    print("C++ Code Execution")
+    
+    bigsol <- CPP_smooth.volume.FEM.mixed(
+      locations = locations, observations = observations, FEMbasis = FEMbasis,
+      covariates = covariates, ndim = ndim, mydim = mydim, BC = BC, num_units = num_units, random_effect = random_effect,
+      incidence_matrix = incidence_matrix, areal.data.avg = areal.data.avg,
+      search = search, bary.locations = bary.locations,
+      optim = optim, lambda = lambda, DOF.stochastic.realizations = DOF.stochastic.realizations, DOF.stochastic.seed = DOF.stochastic.seed,
+      DOF.matrix = DOF.matrix, GCV.inflation.factor = GCV.inflation.factor, lambda.optimization.tolerance = lambda.optimization.tolerance, FLAG_ITERATIVE = FLAG_ITERATIVE, threshold = threshold, max.steps = max.steps, threshold_residual = threshold_residual, verbose = verbose
+    )
   }
 
   f <- bigsol[[1]][1:(num_units * nrow(FEMbasis$mesh$nodes)), ]
@@ -287,7 +296,7 @@ smooth.FEM.mixed <- function(locations = NULL, observations, FEMbasis,
     node_box = bigsol[[10]]
   )
 
-  # Reconstruct FEMbasis with tree mesh
+  # Reconstruct FEMbasis with treeed<-f mesh
   mesh.class <- class(FEMbasis$mesh)
   if (is.null(FEMbasis$mesh$treelev)) { # if doesn't exist the tree information
     FEMbasis$mesh <- append(FEMbasis$mesh, tree_mesh)

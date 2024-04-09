@@ -1,4 +1,4 @@
-# Test 2 -----------------------------------------------------------------------
+# Test 3 -----------------------------------------------------------------------
 if(!require(fdaPDEmixed)){
   devtools::install_github(repo ="aldoclemente/fdaPDEmixed")
 }
@@ -10,12 +10,12 @@ if(!require(mgcv)){
 if(!require(rstudioapi)) install.packages("rstudioapi")
 # ------------------------------------------------------------------------------
 library(fdaPDEmixed)
-#library(mgcv)
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 source("utils.R")
 
-data(horseshoe2.5D)
-mesh=horseshoe2.5D
+load(file = "data/horseshoe3D.RData")
+mesh=horseshoe3D
+plot(mesh)
 FEMbasis <- create.FEM.basis(mesh)
 
 Cov1 <- function(x,y,z){
@@ -30,8 +30,7 @@ nnodes <- nrow(mesh$nodes)
 betas <- as.matrix(c(3, 0.5))
 b_1 <- as.matrix( c(-5, 0.) )
 b_2 <- as.matrix(c(5,0))
-test.locations <- refine.by.splitting.mesh.2.5D(mesh)$nodes
-test.locations <- projection.points.2.5D(mesh, test.locations)
+test.locations <- refine.by.splitting.mesh.3D(mesh)$nodes
 
 test.X1 <- cbind( Cov1(test.locations[,1], test.locations[,2], test.locations[,3]),
                   Cov2(test.locations[,1], test.locations[,2], test.locations[,3]))
@@ -55,16 +54,15 @@ if(!dir.exists("data/")) {
   dir.create("data/")
 }
 
-if( !dir.exists("data/test_2/")){
-  dir.create("data/test_2/")
+if( !dir.exists("data/test_3/")){
+  dir.create("data/test_3/")
 }
 
-folder.name = paste("data/test_2/",date_,"/",sep="")
+folder.name = paste("data/test_3/",date_,"/",sep="")
 
 if(!dir.exists(folder.name)) {
   dir.create(folder.name)
 }
-
 
 for(j in 1:length(n_obs)){
   idx <- sample(1:nnodes, size=n_obs[j])
@@ -79,7 +77,7 @@ for(j in 1:length(n_obs)){
   
   func1 = fs.test.3D(x=locations[,1], y=locations[,2],  z = locations[,3])
   func2 = -func1
- 
+  
   test.func1 = fs.test.3D(x=test.locations[,1], y=test.locations[,2],  z=test.locations[,3])
   test.func2 = -test.func1
   
@@ -107,20 +105,24 @@ for(j in 1:length(n_obs)){
     # V == Cov1
     exact1 <- X1%*% betas + func1 + X1%*% b_1 
     exact2 <- X2%*% betas + func2 + X2%*% b_2
-  
+    
     exact <- c(exact1, exact2)
     observations <- exact
     observations <- observations + rnorm(nlocs*2, mean=0, sd=0.05*(diff(range(c(func1, func2)))))
-
+    
     X = rbind(X1, X2)
     observations <- matrix(observations, nrow=nlocs, ncol=2)
+    
+    lambda.selection.criterion = "grid"
+    lambda.selection.lossfunction = "GCV"
+    DOF.evaluation = "exact"
     # fdaPDE ---------------------------------------------------------------------
     invisible(capture.output(output_fdaPDE <- fdaPDEmixed::smooth.FEM.mixed(observations = observations, locations = locations,
                                                                             covariates = X, random_effect = c(1,2),
                                                                             FEMbasis = FEMbasis, lambda = lambda, 
-                                                                            lambda.selection.criterion = "grid", 
-                                                                            lambda.selection.lossfunction = "GCV",
-                                                                            DOF.evaluation = "exact", FLAG_ITERATIVE = TRUE)))
+                                                                            lambda.selection.criterion = lambda.selection.criterion, 
+                                                                            lambda.selection.lossfunction = lambda.selection.lossfunction,
+                                                                            DOF.evaluation = DOF.evaluation, FLAG_ITERATIVE = TRUE)))
     
     best_lambda <- output_fdaPDE$bestlambda
     #results
@@ -128,7 +130,7 @@ for(j in 1:length(n_obs)){
     results$fdaPDE$beta_2[i] <- output_fdaPDE$beta[2, best_lambda]
     results$fdaPDE$b_1[i,] <- output_fdaPDE$b_i[1:2, best_lambda]
     results$fdaPDE$b_2[i,] <- output_fdaPDE$b_i[3:4, best_lambda]
-  
+    
     # errors
     errors$fdaPDE$beta_1[i] <- rmse(output_fdaPDE$beta[1, best_lambda], betas[1])
     errors$fdaPDE$beta_2[i] <- rmse(output_fdaPDE$beta[2, best_lambda], betas[2])
@@ -159,12 +161,12 @@ for(j in 1:length(n_obs)){
 }
 
 # post-proc --------------------------------------------------------------------
-n_sim <- 30
-n_obs <- c(100, 250, 500, 1000)
-betas <- c(3, 0.5)
+# n_sim <- 30
+# n_obs <- c(100, 250, 500, 1000)
+# betas <- c(3, 0.5)
 fill_col <- viridis::viridis(2, begin=0.25, end=0.95)[1]
-b_1 <- as.matrix( c(-5, 0.) )
-b_2 <- as.matrix(c(5,0))
+# b_1 <- as.matrix( c(-5, 0.) )
+# b_2 <- as.matrix(c(5,0))
 
 estimates <- data.frame(beta1 = matrix(nrow = n_sim * length(n_obs), ncol = 1),
                         beta2 = matrix(nrow = n_sim * length(n_obs), ncol = 1),
@@ -180,8 +182,8 @@ estimates <- data.frame(beta1 = matrix(nrow = n_sim * length(n_obs), ncol = 1),
                         n_obs = as.factor(rep(n_obs, each=n_sim))
 )
 
-date_ = "2024-03-25-15_01_08"
-folder.name = paste("data/test_2/",date_,"/",sep="")
+#date_ = "..."
+#folder.name = paste("data/test_3/",date_,"/",sep="")
 
 for(i in 1:length(n_obs)){
   load(file = paste0(folder.name, "n_obs_", n_obs[i],".RData"))
@@ -231,109 +233,3 @@ for(i in 1:length(n_obs)){
           col=fill_col)
   dev.off()
 }
-
-# plot mean estimates n = 250  -------------------------------------------------
-
-j = 2
-nnodes <- nrow(mesh$nodes)
-idx <- sample(1:nnodes, size=n_obs[j])
-locations <- mesh$nodes[idx,]
-nlocs = dim(locations)[1]
-
-nlocs <- nrow(locations)
-X1 = cbind( Cov1(locations[,1], locations[,2], locations[,3]),
-            Cov2(locations[,1], locations[,2], locations[,3]))
-X2 = cbind( Cov1(locations[,1], locations[,2], locations[,3]),
-            Cov2(locations[,1], locations[,2], locations[,3]))
-
-func1 = fs.test.3D(x=locations[,1], y=locations[,2],  z = locations[,3])
-func2 = -func1
-
-test.func1 = fs.test.3D(x=test.locations[,1], y=test.locations[,2],  z=test.locations[,3])
-test.func2 = -test.func1
-
-estimates <- list(
-  f_1 = matrix(0, nrow=nnodes,ncol=1),
-  f_2 = matrix(0, nrow=nnodes,ncol=1)
-)
-lambda= 10^seq(-2,1,by=0.1)
-for(i in 1:n_sim){
-  exact1 <- X1%*% betas + func1 + X1%*% b_1 
-  exact2 <- X2%*% betas + func2 + X2%*% b_2
-  
-  exact <- c(exact1, exact2)
-  observations <- exact
-  observations <- observations + rnorm(nlocs*2, mean=0, sd=0.05*(diff(range(c(func1, func2)))))
-  
-  X = rbind(X1, X2)
-  observations <- matrix(observations, nrow=nlocs, ncol=2)
-  
-  # fdaPDE ---------------------------------------------------------------------
-  invisible(capture.output(output_fdaPDE <- fdaPDEmixed::smooth.FEM.mixed(observations = observations, locations = locations,
-                                                                          covariates = X, random_effect = c(1,2),
-                                                                          FEMbasis = FEMbasis, lambda = lambda, 
-                                                                          lambda.selection.criterion = "grid", 
-                                                                          lambda.selection.lossfunction = "GCV",
-                                                                          DOF.evaluation = "exact", FLAG_ITERATIVE = TRUE)))
-  
-  best_lambda <- output_fdaPDE$bestlambda
-  estimates$f_1 <- estimates$f_1 + output_fdaPDE$fit.FEM.mixed$coeff[1:nnodes,best_lambda] / n_sim
-  estimates$f_2 <- estimates$f_2 + output_fdaPDE$fit.FEM.mixed$coeff[(nnodes+1):(2*nnodes),best_lambda] / n_sim
-}
-
-save(estimates, file=paste0(folder.name, "n_obs_250_estimates.RData"))
-
-library(plotly)
-options(warn=-1)
-
-func1 = fs.test.3D(x=mesh$nodes[,1], y=mesh$nodes[,2],  z=mesh$nodes[,3])
-func2 = -func1
-# FEMbasis.ref <- create.FEM.basis(mesh.ref)
-
-fig1 <- plot.FEM.2.5D(FEM(coeff = func1, FEMbasis))
-fig2 <- plot.FEM.2.5D(FEM(coeff = func2, FEMbasis))
-
-fig1 <- fig1 %>% layout(scene = list(
-  camera = list(
-    eye = list(x = 1.5, y = -2.25,  z = 0.9)))) # ,  dragmode="zoom"
-fig2 <- fig2 %>% layout(scene = list(
-  camera = list(
-    eye = list(x = 1.5, y = -2.25,  z = 0.9))))
-
-save_image(fig1, paste0(folder.name,"true_f1.pdf"))
-save_image(fig2, paste0(folder.name,"true_f2.pdf"))
-
-estimates_f1 <- FEM(coeff = estimates$f_1, FEMbasis)
-estimates_f2 <- FEM(coeff = estimates$f_2, FEMbasis)
-
-fig1 <- plot.FEM.2.5D(estimates_f1, 
-                    limits = compute_limits(FEM(coeff = func1, FEMbasis)))
-fig2 <- plot.FEM.2.5D(estimates_f2, 
-                    limits = compute_limits(FEM(coeff = func2, FEMbasis)))
-
-fig1 <- fig1 %>% layout(scene = list(
-  camera = list(
-    eye = list(x = 1.5, y = -2.25,  z = 0.9))))
-fig2 <- fig2 %>% layout(scene = list(
-  camera = list(
-    eye = list(x = 1.5, y = -2.25,  z = 0.9))))
-save_image(fig1, paste0(folder.name,"estimate_f1.pdf"))
-save_image(fig2, paste0(folder.name,"estimate_f2.pdf"))
-
-fig_cov1 <- plot.FEM.2.5D(FEM(coeff= Cov1(mesh$nodes[,1], mesh$nodes[,2], mesh$nodes[,3]), FEMbasis))
-fig_cov1 <- fig_cov1 %>% layout(scene = list(
-  camera = list(
-    eye = list(x = 1.5, y = -2.25,  z = 0.9))))
-
-fig_cov2 <- plot.FEM.2.5D(FEM(coeff= Cov2(mesh$nodes[,1], mesh$nodes[,2], mesh$nodes[,3]), FEMbasis))
-fig_cov2 <- fig_cov2 %>% layout(scene = list(
-  camera = list(
-    eye = list(x = 1.5, y = -2.25,  z = 0.9))))
-save_image(fig_cov1, paste0(folder.name,"cov_1.pdf"))
-save_image(fig_cov2, paste0(folder.name,"cov_2.pdf"))
-
-fig_mesh <- plot.mesh.2.5D(mesh) %>% 
-  layout(scene = list(camera = list(
-    eye = list(x = 1.5, y = -2.25,  z = 0.9))))
-
-save_image(fig_mesh, paste0(folder.name, "Cshaped_surface.pdf"))
