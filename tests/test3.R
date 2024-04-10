@@ -13,7 +13,7 @@ library(fdaPDEmixed)
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 source("utils.R")
 
-load(file = "data/horseshoe3D.RData")
+data("horseshoe3D", package = "fdaPDEmixed")
 mesh=horseshoe3D
 plot(mesh)
 FEMbasis <- create.FEM.basis(mesh)
@@ -65,8 +65,13 @@ if(!dir.exists(folder.name)) {
 }
 
 for(j in 1:length(n_obs)){
+  if(j!=4){
   idx <- sample(1:nnodes, size=n_obs[j])
   locations <- mesh$nodes[idx,]
+  }else{
+    idx <- sample(1:nrow(test.locations), size=n_obs[j])
+    locations <- test.locations[idx,]
+  }
   nlocs = dim(locations)[1]
   
   nlocs <- nrow(locations)
@@ -200,7 +205,7 @@ for(i in 1:length(n_obs)){
 {
   mai_ = par("mai")
   mai_[2] = mai_[2] + 0.075
-  pdf(paste0(folder.name, "test_2.pdf"), family = "serif", width = 7, height = 7)
+  pdf(paste0(folder.name, "test_3.pdf"), family = "serif", width = 7, height = 7)
   par(mai=mai_)
   boxplot(estimates$beta1_rmse ~ estimates$n_obs,ylab="RMSE", xlab="observations",
           main =expression(beta[1]),cex.lab = 2, cex.axis = 2, cex.main = 2,
@@ -233,3 +238,54 @@ for(i in 1:length(n_obs)){
           col=fill_col)
   dev.off()
 }
+
+# plot mean estimates n = 250  -------------------------------------------------
+
+j = 2
+nnodes <- nrow(mesh$nodes)
+idx <- sample(1:nnodes, size=n_obs[j])
+locations <- mesh$nodes[idx,]
+nlocs = dim(locations)[1]
+
+nlocs <- nrow(locations)
+X1 = cbind( Cov1(locations[,1], locations[,2], locations[,3]),
+            Cov2(locations[,1], locations[,2], locations[,3]))
+X2 = cbind( Cov1(locations[,1], locations[,2], locations[,3]),
+            Cov2(locations[,1], locations[,2], locations[,3]))
+
+func1 = fs.test.3D(x=locations[,1], y=locations[,2],  z = locations[,3])
+func2 = -func1
+
+test.func1 = fs.test.3D(x=test.locations[,1], y=test.locations[,2],  z=test.locations[,3])
+test.func2 = -test.func1
+
+estimates <- list(
+  f_1 = matrix(0, nrow=nnodes,ncol=1),
+  f_2 = matrix(0, nrow=nnodes,ncol=1)
+)
+lambda= 10^seq(-2,1,by=0.1)
+for(i in 1:n_sim){
+  exact1 <- X1%*% betas + func1 + X1%*% b_1 
+  exact2 <- X2%*% betas + func2 + X2%*% b_2
+  
+  exact <- c(exact1, exact2)
+  observations <- exact
+  observations <- observations + rnorm(nlocs*2, mean=0, sd=0.05*(diff(range(c(func1, func2)))))
+  
+  X = rbind(X1, X2)
+  observations <- matrix(observations, nrow=nlocs, ncol=2)
+  
+  # fdaPDE ---------------------------------------------------------------------
+  invisible(capture.output(output_fdaPDE <- fdaPDEmixed::smooth.FEM.mixed(observations = observations, locations = locations,
+                                                                          covariates = X, random_effect = c(1,2),
+                                                                          FEMbasis = FEMbasis, lambda = lambda, 
+                                                                          lambda.selection.criterion = "grid", 
+                                                                          lambda.selection.lossfunction = "GCV",
+                                                                          DOF.evaluation = "exact", FLAG_ITERATIVE = TRUE)))
+  
+  best_lambda <- output_fdaPDE$bestlambda
+  estimates$f_1 <- estimates$f_1 + output_fdaPDE$fit.FEM.mixed$coeff[1:nnodes,best_lambda] / n_sim
+  estimates$f_2 <- estimates$f_2 + output_fdaPDE$fit.FEM.mixed$coeff[(nnodes+1):(2*nnodes),best_lambda] / n_sim
+}
+
+save(estimates, file=paste0(folder.name, "n_obs_250_estimates.RData"))

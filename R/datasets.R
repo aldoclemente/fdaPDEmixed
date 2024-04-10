@@ -46,6 +46,12 @@ NULL
 #' @name horseshoe2.5D
 NULL
 
+#' Horseshoe3D domain
+#'
+#' A \code{mesh3D} object with nodes and connectivity matrix of a triangular mesh of the horseshoe 3D domain. 
+#'
+#' @name horseshoe3D
+NULL
 
 #' Sphere3Ddata
 #'
