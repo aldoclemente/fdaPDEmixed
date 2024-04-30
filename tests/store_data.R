@@ -91,9 +91,9 @@ for(j in 1:length(n_obs)){
   
   write.csv(format(observations[1:nlocs,], 
                    digits=16), file=paste0(path, "observations_1.csv"))
-  write.csv(format(observations[(nlocs+1):2*nlocs], 
+  write.csv(format(observations[(nlocs+1):(2*nlocs)], 
                    digits=16), file=paste0(path, "observations_2.csv"))
-  write.csv(format(observations[(2*nlocs+1):3*nlocs], 
+  write.csv(format(observations[(2*nlocs+1):(3*nlocs)], 
                    digits=16), file=paste0(path, "observations_3.csv"))
   write.csv(format(observations, digits=16), file=paste0(path, "observations.csv"))
   
@@ -111,6 +111,15 @@ for(j in 1:length(n_obs)){
   write.csv(format(X3[,1], digits=16), file=paste0(path, "V_3.csv"))
   write.csv(format(X[,1], digits=16), 
             file=paste0(path, "V.csv"))
+  
+  # multi-domain "design_matrix"
+  write.csv(format(
+            cbind(as.matrix(X[,2]), 
+                  as.matrix(c(X[1:nlocs,1],            rep(0, times=2*nlocs))),
+                  as.matrix(c(rep(0, times=nlocs),X[(nlocs+1):(2*nlocs),1],  rep(0, times=nlocs))),
+                  as.matrix(c(rep(0, times=2*nlocs), X[(2*nlocs+1):(3*nlocs),1]))), digits=16), 
+            file=paste0(path, "X.csv"))
+  
   
   # fdaPDE ---------------------------------------------------------------------
   invisible(capture.output(output_fdaPDE <- fdaPDEmixed::smooth.FEM.mixed(observations = observations, locations = locations,
