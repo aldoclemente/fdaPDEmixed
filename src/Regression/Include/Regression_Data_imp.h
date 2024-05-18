@@ -44,7 +44,8 @@ RegressionData<MatrixType>::RegressionData(SEXP Rlocations, SEXP RbaryLocations,
 
 // mixed
 template <typename MatrixType>
-RegressionData<MatrixType>::RegressionData(SEXP Rlocations, SEXP RbaryLocations, SEXP Robservations, SEXP RnumUnits, SEXP RRandomEffect, SEXP Rorder, SEXP Rcovariates, SEXP RBCIndices, SEXP RBCValues, SEXP RincidenceMatrix, SEXP RarealDataAvg, SEXP Rsearch, SEXP RFLAG_ITERATIVE, SEXP Rthreshold, SEXP Rmax_num_iteration, SEXP Rthreshold_residual, SEXP verbose, SEXP dummy) : locations_(Rlocations)
+RegressionData<MatrixType>::RegressionData(SEXP Rlocations, SEXP RbaryLocations, SEXP Robservations, SEXP RnumUnits, SEXP RRandomEffect, SEXP Rorder, SEXP Rcovariates, SEXP RBCIndices, SEXP RBCValues, SEXP RincidenceMatrix, SEXP RarealDataAvg, 
+										   SEXP Rsearch, SEXP RFLAG_ITERATIVE, SEXP Rthreshold, SEXP Rmax_num_iteration, SEXP Rthreshold_residual, SEXP verbose, SEXP anderson_memory) : locations_(Rlocations)
 {
 	flag_SpaceTime_ = false;
 	flag_Mixed_ = true;
@@ -70,7 +71,7 @@ RegressionData<MatrixType>::RegressionData(SEXP Rlocations, SEXP RbaryLocations,
 	threshold_ = REAL(Rthreshold)[0];
 	threshold_residual = REAL(Rthreshold_residual)[0];
 	UInt length_indexes = Rf_length(RBCIndices);
-
+	anderson_memory_ = INTEGER(anderson_memory)[0];
 	bc_indices_.assign(INTEGER(RBCIndices), INTEGER(RBCIndices) + length_indexes);
 
 	bc_values_.assign(REAL(RBCValues), REAL(RBCValues) + Rf_length(RBCIndices));

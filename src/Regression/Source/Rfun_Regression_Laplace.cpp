@@ -136,7 +136,8 @@ extern "C"
 	}
 
 	SEXP regression_Laplace_mixed(
-		SEXP Rlocations, SEXP RbaryLocations, SEXP Robservations, SEXP RnumUnits, SEXP RRandomEffect, SEXP Rmesh, SEXP Rorder, SEXP Rmydim, SEXP Rndim, SEXP Rcovariates, SEXP RBCIndices, SEXP RBCValues, SEXP RincidenceMatrix, SEXP RarealDataAvg, SEXP Rsearch, SEXP Roptim, SEXP Rlambda, SEXP Rnrealizations, SEXP Rseed, SEXP RDOF_matrix, SEXP Rtune, SEXP Rsct, SEXP RFLAG_ITERATIVE, SEXP Rthreshold, SEXP Rmaxsteps, SEXP Rthreshold_residual, SEXP verbose)
+		SEXP Rlocations, SEXP RbaryLocations, SEXP Robservations, SEXP RnumUnits, SEXP RRandomEffect, SEXP Rmesh, SEXP Rorder, SEXP Rmydim, SEXP Rndim, SEXP Rcovariates, SEXP RBCIndices, SEXP RBCValues, SEXP RincidenceMatrix, SEXP RarealDataAvg, SEXP Rsearch, SEXP Roptim, SEXP Rlambda, SEXP Rnrealizations, SEXP Rseed, SEXP RDOF_matrix, SEXP Rtune, SEXP Rsct,
+		SEXP RFLAG_ITERATIVE, SEXP Rthreshold, SEXP Rmaxsteps, SEXP Rthreshold_residual, SEXP verbose, SEXP anderson_memory)
 	{
 		// Set input data
 		OptimizationData optimizationData(Roptim, Rlambda, Rnrealizations, Rseed, RDOF_matrix, Rtune, Rsct);
@@ -145,11 +146,13 @@ extern "C"
 		int p_ = Rf_length(RRandomEffect);
 		if (p_ == 0) // fixed-effects model
 		{
-			return skeleton_caller_mixed<RegressionData<MatrixXr>>(Rlocations, RbaryLocations, Robservations, RnumUnits, RRandomEffect, Rorder, Rcovariates, RBCIndices, RBCValues, RincidenceMatrix, RarealDataAvg, Rsearch, RFLAG_ITERATIVE, Rthreshold, Rmaxsteps, Rthreshold_residual, verbose, Rmesh, optimizationData, mydim, ndim);
+			return skeleton_caller_mixed<RegressionData<MatrixXr>>(Rlocations, RbaryLocations, Robservations, RnumUnits, RRandomEffect, Rorder, Rcovariates, RBCIndices, RBCValues, RincidenceMatrix, RarealDataAvg, Rsearch, RFLAG_ITERATIVE, Rthreshold, Rmaxsteps, Rthreshold_residual, verbose, 
+																   Rmesh, optimizationData, mydim, ndim, anderson_memory);
 		}
 		else // true mixed-effects
 		{
-			return skeleton_caller_mixed<RegressionData<SpMat>>(Rlocations, RbaryLocations, Robservations, RnumUnits, RRandomEffect, Rorder, Rcovariates, RBCIndices, RBCValues, RincidenceMatrix, RarealDataAvg, Rsearch, RFLAG_ITERATIVE, Rthreshold, Rmaxsteps, Rthreshold_residual, verbose, Rmesh, optimizationData, mydim, ndim);
+			return skeleton_caller_mixed<RegressionData<SpMat>>(Rlocations, RbaryLocations, Robservations, RnumUnits, RRandomEffect, Rorder, Rcovariates, RBCIndices, RBCValues, RincidenceMatrix, RarealDataAvg, Rsearch, RFLAG_ITERATIVE, Rthreshold, Rmaxsteps, Rthreshold_residual, verbose, 
+																Rmesh, optimizationData, mydim, ndim, anderson_memory);
 		}
 	}
 

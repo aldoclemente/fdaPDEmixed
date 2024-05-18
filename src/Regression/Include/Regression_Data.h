@@ -67,7 +67,7 @@ private:
 	UInt max_num_iterations_; //!< Max number of iterations allowed
 	Real threshold_;		  //!< Limit in difference among J_k and J_k+1 for which we stop iterative method.
 	Real threshold_residual;
-
+	std::size_t anderson_memory_;
 	// utilities
 	//! A method returning the number of space observations
 	UInt getNumberofSpaceObservationsTime(void) const { return observations_.size() / time_locations_.size(); }
@@ -112,7 +112,10 @@ public:
 								   SEXP RBCIndices, SEXP RBCValues, SEXP RincidenceMatrix, SEXP RarealDataAvg, SEXP Rsearch); // 10 sexp
 
 	// space-mixed
-	inline explicit RegressionData(SEXP Rlocations, SEXP RbaryLocations, SEXP Robservations, SEXP RnumUnits, SEXP RRandomEffect, SEXP Rorder, SEXP Rcovariates, SEXP RBCIndices, SEXP RBCValues, SEXP RincidenceMatrix, SEXP RarealDataAvg, SEXP Rsearch, SEXP RFLAG_ITERATIVE, SEXP Rthreshold, SEXP Rmax_num_iteration, SEXP Rthreshold_residual, SEXP verbose, SEXP dummy); // 18 sexp
+	inline explicit RegressionData(SEXP Rlocations, SEXP RbaryLocations, SEXP Robservations, SEXP RnumUnits, SEXP RRandomEffect, SEXP Rorder, SEXP Rcovariates, 
+								   SEXP RBCIndices, SEXP RBCValues, SEXP RincidenceMatrix, SEXP RarealDataAvg, SEXP Rsearch, SEXP RFLAG_ITERATIVE, SEXP Rthreshold, 
+								   SEXP Rmax_num_iteration, SEXP Rthreshold_residual, 
+								   SEXP verbose, 	SEXP anderson_memory); // 18 sexp
 
 	inline explicit RegressionData(SEXP Rlocations, SEXP RbaryLocations, SEXP Rtime_locations, SEXP Robservations, SEXP Rorder, SEXP Rcovariates,
 								   SEXP RBCIndices, SEXP RBCValues, SEXP RincidenceMatrix, SEXP RarealDataAvg, SEXP Rflag_mass, SEXP Rflag_parabolic, SEXP Rflag_iterative, SEXP Rmax_num_iteration, SEXP Rthreshold, SEXP Ric, SEXP Rsearch); // 17 sexp
@@ -157,7 +160,7 @@ public:
 	const Real get_threshold() const { return threshold_; }
 	const Real get_threshold_residual() const { return threshold_residual; }
 	const MatrixXr &getWTW_inv() const { return WTW_inv; }
-
+	const std::size_t anderson_memory() const { return anderson_memory_;}
 	// Locations [[GM passng to const pointers??]]
 	//! A method returning the locations of the observations
 	template <UInt ndim>

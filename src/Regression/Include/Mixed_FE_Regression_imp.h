@@ -1681,18 +1681,18 @@ MatrixXv MixedFERegressionBase<InputHandler>::apply_iterative(void)
 				_beta(s, t) = WTW_inv * (tmp);
 			}
 
-			UInt memory = 10;
 			SingleIteration<MixedFERegressionBase<InputHandler>> SI(*this, s, t);
 			// The iterator object
 			FixedPoint::FixedPointIterator FPI;
-			FPI.setIterator(std::unique_ptr<FixedPoint::AndersonAccelerator>(new FixedPoint::AndersonAccelerator{std::move(SI), 2 * nnodes, 1, memory}));
+			std::size_t anderson_dim = 2*N_*M_;
+			FPI.setIterator(std::unique_ptr<FixedPoint::AndersonAccelerator>(new FixedPoint::AndersonAccelerator{std::move(SI), anderson_dim, 1.0, this->regressionData_.anderson_memory()}));
 			std::vector<Real> &temporary_residual_norm = FPI.getIterator().getIterationFunction().target<SingleIteration<MixedFERegressionBase<InputHandler>>>()->getNormVector();
 
 			FixedPoint::FixedPointOptions options;
 			//auto ...
 			//options.stop_criterion = std::unique_ptr<MixedFERegression_stopping_criterion<MixedFERegressionBase<InputHandler>>>(new MixedFERegression_stopping_criterion<MixedFERegressionBase<InputHandler>>{regressionData_.get_threshold(), regressionData_.get_threshold_residual(), temporary_residual_norm, s, t, *this});
 			options.maxIter = regressionData_.get_maxiter();
-			options.memory = memory;
+			options.memory = this->regressionData_.anderson_memory();
 			//options.stopping_criterion_bitmap[0] = false;
 			//options.stopping_criterion_bitmap[1] = false;
 			//options.stopping_criterion_bitmap[2] = true;

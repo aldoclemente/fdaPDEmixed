@@ -94,7 +94,7 @@ for(j in 1:length(n)){
     time = matrix(0, nrow=n_sim,ncol=1)
   )
   
-  results <- list(monolithic=results, iterative=results)
+  results <- list(monolithic=results, richardson=results, iterative=results)
   
   for(i in 1:n_sim){
     # V == Cov1
@@ -122,6 +122,16 @@ for(j in 1:length(n)){
                                                                                #DOF.evaluation = "exact",
                                                                                FLAG_ITERATIVE = TRUE)))
     results$iterative$time[i] <- as.numeric(difftime(Sys.time(), start_, units = "secs"))
+    
+    start_ <- Sys.time()
+    invisible(capture.output(output_richardson <- fdaPDEmixed::smooth.FEM.mixed(observations = observations, 
+                                                                               covariates = X, random_effect = c(1),
+                                                                               FEMbasis = FEMbasis, lambda = 1, 
+                                                                               #lambda.selection.criterion = "grid", 
+                                                                               #lambda.selection.lossfunction = "GCV",
+                                                                               #DOF.evaluation = "exact",
+                                                                               FLAG_ITERATIVE = TRUE, anderson_memory = 1L)))
+    results$richardson$time[i] <- as.numeric(difftime(Sys.time(), start_, units = "secs"))
     
     start_ <- Sys.time()
     invisible(capture.output(output_monolitich <- fdaPDEmixed::smooth.FEM.mixed(observations = observations, 
@@ -155,7 +165,7 @@ estimates <- data.frame(
 )
 
 estimates2 <- estimates
-
+estimates3 <- estimates
 for(i in 1:length(n)){
   load(file = paste0(folder.name, "n_", n[i],".RData"))
   
@@ -164,13 +174,18 @@ for(i in 1:length(n)){
   
   estimates2$method[(1+(i-1)*n_sim):(i*n_sim)] <- rep("iterative", times=n_sim)
   estimates2$time[(1+(i-1)*n_sim):(i*n_sim)] <- results$iterative$time
+  
+  estimates3$method[(1+(i-1)*n_sim):(i*n_sim)] <- rep("richardson", times=n_sim)
+  estimates3$time[(1+(i-1)*n_sim):(i*n_sim)] <- results$iterative$time
 }
 
-estimates <- rbind(estimates, estimates2)
+estimates <- rbind(estimates, estimates2, estimates3)
 estimates$method <- as.factor(estimates$method)
-at_ <- c(1:2, 4:5, 7:8, 10:11)
-fill_col <- viridis::viridis(3, begin=0.25, end=0.95)
-fill_col <- fill_col[1:2]
+
+#at_ <- c(1:2, 4:5, 7:8, 10:11)
+at_ <- c(1:3, 5:7, 9:11, 13:15)
+fill_col <- viridis::viridis((length(levels(estimates$method))+1), begin=0.25, end=0.95)
+fill_col <- fill_col[1:length(levels(estimates$method))]
 legend <- levels(estimates$method)
 
 {
@@ -260,7 +275,7 @@ for(j in 1:length(n_obs)){
     time = matrix(0, nrow=n_sim,ncol=1)
   )
   
-  results <- list(monolithic=results, iterative=results)
+  results <- list(monolithic=results, iterative=results, richardson=results)
   
   for(i in 1:n_sim){
     # V == Cov1
@@ -289,6 +304,18 @@ for(j in 1:length(n_obs)){
                                                                                #DOF.evaluation = "exact",
                                                                                FLAG_ITERATIVE = TRUE)))
     results$iterative$time[i] <- as.numeric(difftime(Sys.time(), start_, units = "secs"))
+    
+    start_ <- Sys.time()
+    invisible(capture.output(output_richardson <- fdaPDEmixed::smooth.FEM.mixed(observations = observations, 
+                                                                               locations = locations,
+                                                                               covariates = X, random_effect = c(1),
+                                                                               FEMbasis = FEMbasis, lambda = 1, 
+                                                                               #lambda.selection.criterion = "grid", 
+                                                                               #lambda.selection.lossfunction = "GCV",
+                                                                               #DOF.evaluation = "exact",
+                                                                               FLAG_ITERATIVE = TRUE, anderson_memory = 1L)))
+    results$richardson$time[i] <- as.numeric(difftime(Sys.time(), start_, units = "secs"))
+    
     
     start_ <- Sys.time()
     invisible(capture.output(output_monolitich <- fdaPDEmixed::smooth.FEM.mixed(observations = observations, 
@@ -423,7 +450,7 @@ for(j in 1:length(n_obs)){
     time = matrix(0, nrow=n_sim,ncol=1)
   )
   
-  results <- list(monolithic=results, iterative=results)
+  results <- list(monolithic=results, iterative=results, richardson=results)
   
   for(i in 1:n_sim){
     # V == Cov1
@@ -452,6 +479,17 @@ for(j in 1:length(n_obs)){
                                                                                DOF.evaluation = "exact",
                                                                                FLAG_ITERATIVE = TRUE)))
     results$iterative$time[i] <- as.numeric(difftime(Sys.time(), start_, units = "secs"))
+    
+    start_ <- Sys.time()
+    invisible(capture.output(output_richardson <- fdaPDEmixed::smooth.FEM.mixed(observations = observations, 
+                                                                               locations = locations,
+                                                                               covariates = X, random_effect = c(1),
+                                                                               FEMbasis = FEMbasis, lambda = lambda, 
+                                                                               lambda.selection.criterion = "grid", 
+                                                                               lambda.selection.lossfunction = "GCV",
+                                                                               DOF.evaluation = "exact",
+                                                                               FLAG_ITERATIVE = TRUE, anderson_memory = 1L)))
+    results$richardson$time[i] <- as.numeric(difftime(Sys.time(), start_, units = "secs"))
     
     start_ <- Sys.time()
     invisible(capture.output(output_monolitich <- fdaPDEmixed::smooth.FEM.mixed(observations = observations, 

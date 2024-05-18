@@ -1,4 +1,4 @@
-CPP_smooth.volume.FEM.mixed<-function(locations, observations, FEMbasis, covariates, ndim, mydim, BC, num_units, random_effect, incidence_matrix, areal.data.avg, search, bary.locations, optim, lambda, DOF.stochastic.realizations, DOF.stochastic.seed, DOF.matrix, GCV.inflation.factor, lambda.optimization.tolerance, FLAG_ITERATIVE, threshold, max.steps, threshold_residual, verbose){
+CPP_smooth.volume.FEM.mixed<-function(locations, observations, FEMbasis, covariates, ndim, mydim, BC, num_units, random_effect, incidence_matrix, areal.data.avg, search, bary.locations, optim, lambda, DOF.stochastic.realizations, DOF.stochastic.seed, DOF.matrix, GCV.inflation.factor, lambda.optimization.tolerance, FLAG_ITERATIVE, threshold, max.steps, threshold_residual, verbose, anderson_memory){
   
   # Indexes in C++ starts from 0, in R from 1, opportune transformation
   FEMbasis$mesh$tetrahedrons = FEMbasis$mesh$tetrahedrons - 1
@@ -86,8 +86,9 @@ CPP_smooth.volume.FEM.mixed<-function(locations, observations, FEMbasis, covaria
   storage.mode(max.steps) <- "integer"
   storage.mode(threshold) <- "double"
   storage.mode(threshold_residual) <- "double"
-  
+  storage.mode(anderson_memory) <- "integer"
   ## Call C++ function
-  bigsol <- .Call("regression_Laplace_mixed", locations, bary.locations, observations, num_units, random_effect, FEMbasis$mesh, FEMbasis$order, mydim, ndim, covariates, BC$BC_indices, BC$BC_values, incidence_matrix, areal.data.avg, search, optim, lambda, DOF.stochastic.realizations, DOF.stochastic.seed, DOF.matrix, GCV.inflation.factor, lambda.optimization.tolerance, PACKAGE = "fdaPDEmixed", FLAG_ITERATIVE, threshold, max.steps, threshold_residual, verbose)
+  bigsol <- .Call("regression_Laplace_mixed", locations, bary.locations, observations, num_units, random_effect, FEMbasis$mesh, FEMbasis$order, mydim, ndim, covariates, BC$BC_indices, BC$BC_values, incidence_matrix, areal.data.avg, search, optim, lambda, DOF.stochastic.realizations, DOF.stochastic.seed, DOF.matrix, GCV.inflation.factor, lambda.optimization.tolerance, PACKAGE = "fdaPDEmixed", 
+                  FLAG_ITERATIVE, threshold, max.steps, threshold_residual, verbose, anderson_memory)
   return(bigsol)
 }
