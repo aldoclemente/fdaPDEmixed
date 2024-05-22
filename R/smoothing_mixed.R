@@ -233,7 +233,7 @@ smooth.FEM.mixed <- function(locations = NULL, observations, FEMbasis,
   # Start coefficient conversion
   p <- length(random_effect) # num of random-effect coeff
   q <- dim(covariates)[2] # num of common-effect coeff
-  matrixcoeff <- matrix(data = bigsol[[5]], nrow = q - p + num_units * p, ncol = length(lambda)) # implementative ver. (length: (q-p) + m*p)
+  matrixcoeff <- matrix(data = bigsol[[5]], nrow = q - p + num_units * p, ncol = ifelse(is.null(lambda), 1, length(lambda))) # implementative ver. (length: (q-p) + m*p)
 
   # convert into official coeff (length: q + m*p)
   if (p < q) {
@@ -247,7 +247,7 @@ smooth.FEM.mixed <- function(locations = NULL, observations, FEMbasis,
   }
 
   # convert fixed-effect and random effect
-  beta <- matrix(0, nrow = q, ncol = length(lambda))
+  beta <- matrix(0, nrow = q, ncol = ifelse(is.null(lambda), 1, length(lambda)))
   indBeta <- 1
   indBi <- 1
 
@@ -256,7 +256,7 @@ smooth.FEM.mixed <- function(locations = NULL, observations, FEMbasis,
       beta[i, ] <- betaPrime[indBeta, , drop = FALSE]
       indBeta <- indBeta + 1
     }else { # convert beta prime to original prime
-      temp <- numeric(length(lambda)) # it initializes all to 0
+      temp <- numeric(ifelse(is.null(lambda), 1, length(lambda))) # it initializes all to 0
       for (j in 1:num_units){
         temp <- temp + b_iPrime[indBi + (j - 1) * p, ]
       }
@@ -264,7 +264,7 @@ smooth.FEM.mixed <- function(locations = NULL, observations, FEMbasis,
       indBi <- indBi + 1
     }
   }
-  b_i <- matrix(0, nrow = num_units * p, ncol = length(lambda))
+  b_i <- matrix(0, nrow = num_units * p, ncol = ifelse(is.null(lambda), 1, length(lambda)))
   if (p != 0) {
     indRanEff <- 1 # this index will be cycled according to random_effect elements
     for (i in 1:(num_units * p)){
