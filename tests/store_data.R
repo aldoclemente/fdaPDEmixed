@@ -53,9 +53,13 @@ b <- as.matrix( c(-5., 0, 5.) )
 
 n_obs <- c(100, 250, 500, 1000)
 
+if(!dir.exists(paste0(foldername, "monolithic/"))) dir.create(paste0(foldername, "monolithic/"))
+if(!dir.exists(paste0(foldername, "richardson/"))) dir.create(paste0(foldername, "richardson/"))
+
 set.seed(0)
 for(j in 1:length(n_obs)){
-  path <- paste0(foldername, n_obs[j], "/")
+  # monolithic -----------------------------------------------------------------
+  path <- paste0(foldername, "monolithic/", n_obs[j], "/")
   if(!dir.exists(path)) dir.create(path)
   
   locations <- sample_locations.mgcv(mesh, n_obs[j])
@@ -120,8 +124,6 @@ for(j in 1:length(n_obs)){
                   as.matrix(c(rep(0, times=2*nlocs), X[(2*nlocs+1):(3*nlocs),1]))), digits=16), 
             file=paste0(path, "X.csv"))
   
-  
-  # fdaPDE ---------------------------------------------------------------------
   invisible(capture.output(output_fdaPDE <- fdaPDEmixed::smooth.FEM.mixed(observations = observations, locations = locations,
                                                                           covariates = X, random_effect = c(1),
                                                                           FEMbasis = FEMbasis, lambda=1,
@@ -149,4 +151,88 @@ for(j in 1:length(n_obs)){
   write.csv(format(as.matrix(c(func1, func2, func3)), 
                    digits=16), file = paste0(path, "f.csv"))     # esatta !
   
+  # richardson -----------------------------------------------------------------
+  
+  path <- paste0(foldername, "richardson/", n_obs[j], "/")
+  if(!dir.exists(path)) dir.create(path)
+  
+  write.csv(format(locations, digits=16), file=paste0(path, "locations_1.csv"))
+  write.csv(format(rbind(locations,locations,locations), digits=16), 
+            file=paste0(path, "locations.csv"))
+  write.csv(format(X1, digits=16), file=paste0(path, "covariates_1.csv"))
+  write.csv(format(X2, digits=16), file=paste0(path, "covariates_2.csv"))
+  write.csv(format(X3, digits=16), file=paste0(path, "covariates_3.csv"))
+  write.csv(format(rbind(X1,X2,X3), digits=16), file=paste0(path, "covariates.csv"))
+  
+  write.csv(format(as.vector(observations)[1:nlocs], 
+                   digits=16), file=paste0(path, "observations_1.csv"))
+  write.csv(format(as.vector(observations)[(nlocs+1):(2*nlocs)], 
+                   digits=16), file=paste0(path, "observations_2.csv"))
+  write.csv(format(as.vector(observations)[(2*nlocs+1):(3*nlocs)], 
+                   digits=16), file=paste0(path, "observations_3.csv"))
+  write.csv(format(as.vector(observations), digits=16), file=paste0(path, "observations.csv"))
+  
+  write.csv(format(X1[,2], digits=16), file=paste0(path, "W_1.csv"))
+  write.csv(format(X2[,2], digits=16), file=paste0(path, "W_2.csv"))
+  write.csv(format(X3[,2], digits=16), file=paste0(path, "W_3.csv"))
+  write.csv(format(X[,2], digits=16), 
+            file=paste0(path, "W.csv"))
+  
+  write.csv(format(X1[,1], digits=16), file=paste0(path, "V_1.csv"))
+  write.csv(format(X2[,1], digits=16), file=paste0(path, "V_2.csv"))
+  write.csv(format(X3[,1], digits=16), file=paste0(path, "V_3.csv"))
+  write.csv(format(X[,1], digits=16), 
+            file=paste0(path, "V.csv"))
+  
+  # multi-domain "design_matrix"
+  write.csv(format(
+    cbind(as.matrix(X[,2]), 
+          as.matrix(c(X[1:nlocs,1],            rep(0, times=2*nlocs))),
+          as.matrix(c(rep(0, times=nlocs),X[(nlocs+1):(2*nlocs),1],  rep(0, times=nlocs))),
+          as.matrix(c(rep(0, times=2*nlocs), X[(2*nlocs+1):(3*nlocs),1]))), digits=16), 
+    file=paste0(path, "X.csv"))
+  
+  invisible(capture.output(output_fdaPDE <- fdaPDEmixed::smooth.FEM.mixed(observations = observations, locations = locations,
+                                                                          covariates = X, random_effect = c(1),
+                                                                          FEMbasis = FEMbasis, lambda=1,
+                                                                          FLAG_ITERATIVE = TRUE, 
+                                                                          anderson_memory = 0L))) # anderson_memory = 1 -> richardson method
+  
+  write.csv(format(output_fdaPDE$beta, digits=16), file = paste0(path,"beta_hat.csv"))
+  write.csv(format(output_fdaPDE$b_i, digits=16), file = paste0(path,"b_hat.csv"))
+  write.csv(format(output_fdaPDE$fit.FEM.mixed$coeff[1:nnodes,], 
+                   digits=16), file = paste0(path,"f_1_hat.csv"))
+  write.csv(format(output_fdaPDE$fit.FEM.mixed$coeff[(nnodes+1):(2*nnodes),], 
+                   digits=16), file = paste0(path,"f_2_hat.csv"))
+  write.csv(format(output_fdaPDE$fit.FEM.mixed$coeff[(2*nnodes+1):(3*nnodes),], 
+                   digits=16), file = paste0(path,"f_3_hat.csv"))
+  write.csv(format(output_fdaPDE$fit.FEM.mixed$coeff, 
+                   digits=16), file = paste0(path,"f_hat.csv"))
+  
+  write.csv(format(as.matrix(func1), digits=16), file = paste0(path, "f_1.csv"))
+  write.csv(format(as.matrix(func2), digits=16), file = paste0(path, "f_2.csv"))
+  write.csv(format(as.matrix(func3), digits=16), file = paste0(path, "f_3.csv"))
+  write.csv(format(as.matrix(c(func1, func2, func3)), 
+                   digits=16), file = paste0(path, "f.csv"))  
 }
+
+observations = read.csv("data/test_1/richardson/100/observations.csv")[,2]
+observations = matrix(observations, nrow=100, ncol=3)
+locations = read.csv("data/test_1/richardson/100/locations_1.csv")[,2:3]
+X = read.csv("data/test_1/richardson/100/covariates.csv")[,2:3]
+invisible(capture.output(output_fdaPDE <- fdaPDEmixed::smooth.FEM.mixed(observations = observations, locations = locations,
+                                                                        covariates = X, random_effect = c(1),
+                                                                        FEMbasis = FEMbasis, lambda=1,
+                                                                        FLAG_ITERATIVE = TRUE, 
+                                                                        anderson_memory = 1L))) # anderson_memory = 1 -> richardson method
+
+output_orto = read.csv("/home/aldoclemente/Documents/studenti/mancinelli-ortolani/fdaPDE-cpp/test/build/f_100.csv")[,1]
+
+max(abs(output_orto[1:nnodes]- output_fdaPDE$fit.FEM.mixed$coeff[1:nnodes]))
+max(abs(output_orto[nnodes:(2*nnodes)]- 
+          output_fdaPDE$fit.FEM.mixed$coeff[nnodes:(2*nnodes)]))
+
+
+
+range(output_orto)
+range(output_fdaPDE$fit.FEM.mixed$coeff)
