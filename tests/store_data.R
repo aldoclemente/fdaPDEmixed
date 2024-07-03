@@ -24,7 +24,7 @@ for(K in 1:5){
   mesh = refine.mesh.2D(mesh, maximum_area = 0.025/4^(K-1), minimum_angle = 30)
   FEMbasis <- create.FEM.basis(mesh)
   
-  foldername <- paste0(datafolder, "domain_", K, "/")
+  foldername <- paste0(datafolder, "c_shaped_", K, "/")
   if(!dir.exists(foldername)) dir.create(foldername)
   
   foldermesh <- paste0(foldername, "c_shaped_", K, "/")
