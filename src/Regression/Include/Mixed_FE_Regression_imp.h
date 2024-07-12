@@ -94,7 +94,7 @@ public:
 				Timer.start();
 				mixedRegressor.build_psi_mini(k);
 				timespec timestop = Timer.stop();
-				Rprintf("step: buildpsimini %d\n", timestop.tv_sec);
+				//Rprintf("step: buildpsimini %d\n", timestop.tv_sec);
 				mixedRegressor.DMat_ = mixedRegressor.psi_mini.transpose() * mixedRegressor.psi_mini;
 				mixedRegressor.buildSystemMatrixNoCov(lambdaS, lambdaT);
 				if (mixedRegressor.regressionData_.getDirichletIndices()->size() != 0)
@@ -102,7 +102,7 @@ public:
 				Timer.start();
 				mixedRegressor.system_factorize();
 				timestop = Timer.stop();
-				Rprintf("step: system factorize %d\n", timestop.tv_sec);
+				//Rprintf("step: system factorize %d\n", timestop.tv_sec);
 			}
 
 			residual_k.head(N_) = residual.segment(k * N_, N_);
@@ -119,7 +119,7 @@ public:
 				Timer.start();
 				mixedRegressor._solution_k_ = mixedRegressor.template solve_covariates_iter(residual_k, k);
 				timespec timestop = Timer.stop();
-				Rprintf("step: solve covariates iter %d\n", timestop.tv_sec);
+				//Rprintf("step: solve covariates iter %d\n", timestop.tv_sec);
 			}
 
 			// Store the solution fˆ{k,i}, gˆ{k,i} in _solution(s,t)
@@ -137,10 +137,10 @@ public:
 			beta_rhs = W.transpose() * (*obsp - mixedRegressor.LeftMultiplybyPsi(mixedRegressor._solution(s, t).topRows(mixedRegressor.psi_.cols() * M_)));
 			mixedRegressor._beta(s, t) = mixedRegressor.WTW_inv * (beta_rhs);
 		}
-		Rprintf("residual: %g\n", temporary_residual_norm.back());
+		//Rprintf("residual: %g\n", temporary_residual_norm.back());
 
 		timespec timestop = Timer.stop();
-		Rprintf("step: computation various %d\n", timestop.tv_sec);
+		//Rprintf("step: computation various %d\n", timestop.tv_sec);
 		return mixedRegressor._solution(s, t);
 	}
 
@@ -302,7 +302,7 @@ void MixedFERegressionBase<InputHandler>::setPsi(const MeshHandler<ORDER, mydim,
 			if (tri_activated.getId() == Identifier::NVAL)
 			{ // Invald id --> error
 
-				Rprintf("ERROR: Point %d is not in the domain, remove point and re-perform smoothing\n", i + 1);
+				//Rprintf("ERROR: Point %d is not in the domain, remove point and re-perform smoothing\n", i + 1);
 			}
 			else
 			{ // tri_activated.getId() found, it's action might be felt a priori by all the psi of the element, one for each node
@@ -337,7 +337,7 @@ void MixedFERegressionBase<InputHandler>::setPsi(const MeshHandler<ORDER, mydim,
 			if (tri_activated.getId() == Identifier::NVAL)
 			{ // If not found
 
-				Rprintf("ERROR: Point %d is not in the domain, remove point and re-perform smoothing\n", i + 1);
+				//Rprintf("ERROR: Point %d is not in the domain, remove point and re-perform smoothing\n", i + 1);
 			}
 			else
 			{ // tri_activated.getId() found, it's action might be felt a priori by all the psi of the element, one for each node
@@ -408,13 +408,13 @@ VectorXr MixedFERegressionBase<InputHandler>::LeftMultiplybyPsi(const VectorXr &
 template <typename InputHandler>
 SpMat MixedFERegressionBase<InputHandler>::LeftMultiplybyPsiTranspose(const SpMat &rhs)
 {
-	Eigen::SparseMatrix<Real, Eigen::RowMajor> res;
+	Eigen::SparseMatrix<Real, Eigen::RowMajor> res; // RowMajor ??? Utilizziamo direttamente SpMat
 	res.resize(psi_.cols() * M_, rhs.cols());
 	for (int k = 0; k < M_; ++k)
 	{
 		if (!regressionData_.getObservationsNA()->empty())
 			build_psi_mini(k);
-		res.middleRows(k * psi_.cols(), psi_.cols()) = psi_mini.transpose() * rhs.middleRows(k * psi_.rows(), psi_.rows()).pruned();
+		res.middleRows(k * psi_.cols(), psi_.cols()) = psi_mini.transpose() * rhs.block(k * psi_.rows(), 0, psi_.rows(), rhs.cols()); //.pruned(); // matrix.middleRows(i,q); rhs.block(i, j, p, q); 
 	}
 	return SpMat(res);
 }

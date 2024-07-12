@@ -314,18 +314,18 @@ inline void RegressionData<SpMat>::setCovariates(SEXP Rcovariates, SEXP RRandomE
 	}
 	covariates_.prune(0.);
 	covariates_.makeCompressed();
-	if (verbose_)
-		Rprintf("Non zeros of design matrix X: %i\n", covariates_.nonZeros());
+	//if (verbose_)
+	//	Rprintf("Non zeros of design matrix X: %i\n", covariates_.nonZeros());
 	SpMat tmp(covariates_.cols(), covariates_.cols());
 	tmp.selfadjointView<Eigen::Upper>().rankUpdate(covariates_.transpose());
 	dec_mat_type WTW_;
 	WTW_.compute(tmp.selfadjointView<Eigen::Upper>());
-	if (verbose_)
-		Rprintf("Non zeros of L: %i\n", static_cast<SpMat>(WTW_.matrixL()).nonZeros());
-	if (verbose_)
-		Rprintf("Non zeros of U: %i\n", static_cast<SpMat>(WTW_.matrixU()).nonZeros());
-	if (verbose_)
-		Rprintf("Size of P (should be like the dimension of WTW ? = %i): %i\n", static_cast<SpMat>(WTW_.matrixU()).cols(), WTW_.permutationP().size());
+	//if (verbose_)
+	//	Rprintf("Non zeros of L: %i\n", static_cast<SpMat>(WTW_.matrixL()).nonZeros());
+	//if (verbose_)
+	//	Rprintf("Non zeros of U: %i\n", static_cast<SpMat>(WTW_.matrixU()).nonZeros());
+	//if (verbose_)
+	//	Rprintf("Size of P (should be like the dimension of WTW ? = %i): %i\n", static_cast<SpMat>(WTW_.matrixU()).cols(), WTW_.permutationP().size());
 	tmp.setIdentity();
 	WTW_inv = WTW_.solve(tmp);
 }
