@@ -408,14 +408,19 @@ VectorXr MixedFERegressionBase<InputHandler>::LeftMultiplybyPsi(const VectorXr &
 template <typename InputHandler>
 SpMat MixedFERegressionBase<InputHandler>::LeftMultiplybyPsiTranspose(const SpMat &rhs)
 {
-	Eigen::SparseMatrix<Real, Eigen::RowMajor> res; // RowMajor ??? Utilizziamo direttamente SpMat
+	Eigen::SparseMatrix<Real, Eigen::RowMajor> res; 
+	// RowMajor -> https://stackoverflow.com/questions/77457269/c-eigen-read-only-sparse-block-subexpression-how-to-write
+	//SpMat res;
 	res.resize(psi_.cols() * M_, rhs.cols());
 	for (int k = 0; k < M_; ++k)
 	{
 		if (!regressionData_.getObservationsNA()->empty())
 			build_psi_mini(k);
-		res.middleRows(k * psi_.cols(), psi_.cols()) = psi_mini.transpose() * rhs.block(k * psi_.rows(), 0, psi_.rows(), rhs.cols()); //.pruned(); // matrix.middleRows(i,q); rhs.block(i, j, p, q); 
+		//res.middleRows(k * psi_.cols(), psi_.cols()) = psi_mini.transpose() * rhs.block(k * psi_.rows(), 0, psi_.rows(), rhs.cols()); //.pruned(); // matrix.middleRows(i,q); rhs.block(i, j, p, q); 
+	
+		res.middleRows(k * psi_.cols(), psi_.cols()) = psi_mini.transpose() * rhs.middleRows(k * psi_.rows(), psi_.rows());
 	}
+	res.pruned();
 	return SpMat(res);
 }
 
@@ -1000,7 +1005,6 @@ void MixedFERegressionBase<InputHandler>::computeDegreesOfFreedomExact(UInt outp
 	MatrixXr X1;
 	if (regressionData_.getNumberOfRegions() == 0)
 	{ // pointwise data
-		//Rprintf("a");
 		X1 = psi_.transpose() * LeftMultiplybyQ(psi_);
 	}
 	else
@@ -1012,9 +1016,7 @@ void MixedFERegressionBase<InputHandler>::computeDegreesOfFreedomExact(UInt outp
 		isRcomputed_ = true;
 		// take R0 from the final matrix since it has already applied the dirichlet boundary conditions
 		SpMat R0 = matrixNoCov_.bottomRightCorner(nnodes, nnodes) / lambdaS;
-		//Rprintf("b");
 		R0dec_.compute(R0);
-		//Rprintf("c");
 		if (!regressionData_.isSpaceTime() || !regressionData_.getFlagParabolic())
 		{
 			MatrixXr X2 = R0dec_.solve(R1_);
@@ -1043,7 +1045,6 @@ void MixedFERegressionBase<InputHandler>::computeDegreesOfFreedomExact(UInt outp
 	// impose dirichlet boundary conditions if needed
 	if (regressionData_.getDirichletIndices()->size() != 0)
 	{
-		//Rprintf("cc");
 		const std::vector<UInt> *bc_indices = regressionData_.getDirichletIndices();
 		UInt nbc_indices = bc_indices->size();
 
@@ -1057,8 +1058,7 @@ void MixedFERegressionBase<InputHandler>::computeDegreesOfFreedomExact(UInt outp
 
 	X3 -= P;
 	Eigen::PartialPivLU<MatrixXr> Dsolver(X3);
-	//Rprintf("d");
-
+	
 	const auto k = regressionData_.getObservationsIndices();
 
 	if (!regressionData_.isSpaceTime() && !regressionData_.isMixed() && regressionData_.isLocationsByNodes())
@@ -1094,19 +1094,15 @@ void MixedFERegressionBase<InputHandler>::computeDegreesOfFreedomExact(UInt outp
 	if (regressionData_.isSpaceTime() || !regressionData_.isLocationsByNodes() || regressionData_.isMixed())
 	{
 		MatrixXr X;
-		//Rprintf("e");
 		X = Dsolver.solve(X1);
 
-		//Rprintf("f");
 		if (regressionData_.getCovariates()->rows() != 0)
 		{
 			degrees += regressionData_.getCovariates()->cols();
 		}
 		for (int i = 0; i < nnodes; ++i)
 		{
-			//Rprintf("g");
 			degrees += X(i, i);
-			//Rprintf("h");
 		}
 	}
 
@@ -1699,7 +1695,7 @@ MatrixXv MixedFERegressionBase<InputHandler>::apply_iterative(void)
 			FPI.getOptions() = std::move(options);
 			// Solving
 			FPI.compute(_solution(s, t));
-			// Rprintf("matrix F size %d\n", ((std::unique_ptr<FixedPoint::AndersonAccelerator> &)(FPI.getIterator2()))->F.cols());
+			
 			// const auto &temporary_residual_norm = (FPI.getIterator().getIterationFunction().target)->getNormVector();
 			residual_norm__(s, t).resize(temporary_residual_norm.size());
 			for (int idx = 0; idx < temporary_residual_norm.size(); ++idx)
