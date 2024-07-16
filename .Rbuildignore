@@ -14,5 +14,6 @@
 ^src/\.clang-format$
 ^src/core/\.clang-format$
 ^src/core/test$
+^utils$
 ^fdaPDEISCHIA\.Rproj$
 ^fdaPDEmixed\.Rproj$
