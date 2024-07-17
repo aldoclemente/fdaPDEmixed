@@ -16,8 +16,8 @@ then, to install the latest stable version of the package, you can either:
 
 <!-- -->
 
-    git clone -b main git@github.com:aldoclemente/fdaPDEmixed.git 
-    cd path/to/fdaPDEmixed 
+    git clone --recurse-submodules git@github.com:aldoclemente/fdaPDEmixed.git 
+    cd fdaPDEmixed/ 
 
 and install the package from the R console
 

@@ -2,17 +2,25 @@ f(!require(fdaPDEmixed)){
   devtools::install_github(repo ="aldoclemente/fdaPDEmixed")
 }
 
-if(!require(rstudioapi)) install.packages("rstudioapi")
+if(.Platform$GUI == "RStudio"){
+  if(!require(rstudioapi)) install.packages("rstudioapi")
+}
 # ------------------------------------------------------------------------------
 library(fdaPDEmixed)
 rm(list=ls())
 
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+if(.Platform$GUI == "RStudio"){
+  setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+}
+
 source("utils.R")
 
 set.seed(0)
 datafolder <- "data/"
 if(!dir.exists(datafolder)) dir.create(datafolder)
+
+meshfolder <- paste0(datafolder, "mesh/")
+if(!dir.exists(meshfolder)) dir.create(meshfolder)
 
 datafolder <- paste0(datafolder,"test_1/")
 if(!dir.exists(datafolder)) dir.create(datafolder)
@@ -24,16 +32,16 @@ for(K in 1:5){
   mesh = refine.mesh.2D(mesh, maximum_area = 0.025/4^(K-1), minimum_angle = 30)
   FEMbasis <- create.FEM.basis(mesh)
   
-  foldername <- paste0(datafolder, "c_shaped_", K, "/")
-  if(!dir.exists(foldername)) dir.create(foldername)
-  
-  foldermesh <- paste0(foldername, "c_shaped_", K, "/")
-  if(!dir.exists(foldermesh)) dir.create(foldermesh) 
-  write.csv(mesh$nodes, file=paste0(foldermesh, "points.csv"))
-  write.csv(mesh$triangles, file=paste0(foldermesh, "elements.csv"))
-  write.csv(mesh$edges, file=paste0(foldermesh, "edges.csv"))
-  write.csv(as.integer(mesh$nodesmarkers), file=paste0(foldermesh, "boundary.csv"))
-  write.csv(mesh$neighbors, file=paste0(foldermesh, "neigh.csv"))
+  foldername <- paste0(meshfolder, "c_shaped_", K, "/")
+  #foldermesh <- paste0(foldername, "c_shaped_", K, "/")
+  if(!dir.exists(foldername)){ 
+    dir.create(foldername)
+    write.csv(mesh$nodes, file=paste0(foldername, "points.csv"))
+    write.csv(mesh$triangles, file=paste0(foldername, "elements.csv"))
+    write.csv(mesh$edges, file=paste0(foldername, "edges.csv"))
+    write.csv(as.integer(mesh$nodesmarkers), file=paste0(foldername, "boundary.csv"))
+    write.csv(mesh$neighbors, file=paste0(foldername, "neigh.csv"))
+  }
   
   test.locations <- refine.mesh.2D(mesh, maximum_area = 0.0025/4^(K-1), minimum_angle = 30)$nodes
   
@@ -67,20 +75,18 @@ for(K in 1:5){
   
   n_obs <- c(100, 250, 500, 1000, 5000, 10000)
   
-  if(!dir.exists(paste0(foldername, "monolithic/"))) dir.create(paste0(foldername, "monolithic/"))
-  if(!dir.exists(paste0(foldername, "richardson/"))) dir.create(paste0(foldername, "richardson/"))
-  
   set.seed(0)
   for(j in 1:length(n_obs)){
     # monolithic -----------------------------------------------------------------
-    path <- paste0(foldername, "monolithic/", n_obs[j], "/")
-    if(!dir.exists(path)) dir.create(path)
+    
+    foldername <- paste0(datafolder, "c_shaped_", K, "/")
+    if(!dir.exists(foldername)) dir.create(foldername)
     
     locations <- sample_locations.mgcv(mesh, n_obs[j])
     
-    write.csv(format(locations, digits=16), file=paste0(path, "locations_1.csv"))
-    write.csv(format(rbind(locations,locations,locations), digits=16), 
-              file=paste0(path, "locations.csv"))
+    write.csv(format(locations, digits=16), file=paste0(foldername, "locations_1.csv"))
+    # write.csv(format(rbind(locations,locations,locations), digits=16), 
+    #           file=paste0(foldername, "locations.csv"))
     
     nlocs = dim(locations)[1]
     
@@ -89,10 +95,10 @@ for(K in 1:5){
     X2 = cbind( Cov1(locations[,1], locations[,2]), rnorm(nlocs, mean = 0, sd = 2))
     X3 = cbind( Cov1(locations[,1], locations[,2]), rnorm(nlocs, mean = 0, sd = 2))
     
-    write.csv(format(X1, digits=16), file=paste0(path, "covariates_1.csv"))
-    write.csv(format(X2, digits=16), file=paste0(path, "covariates_2.csv"))
-    write.csv(format(X3, digits=16), file=paste0(path, "covariates_3.csv"))
-    write.csv(format(rbind(X1,X2,X3), digits=16), file=paste0(path, "covariates.csv"))
+    # write.csv(format(X1, digits=16), file=paste0(foldername, "covariates_1.csv"))
+    # write.csv(format(X2, digits=16), file=paste0(foldername, "covariates_2.csv"))
+    # write.csv(format(X3, digits=16), file=paste0(foldername, "covariates_3.csv"))
+    # write.csv(format(rbind(X1,X2,X3), digits=16), file=paste0(foldername, "covariates.csv"))
     
     func1 = fs.test.time(x=locations[,1], y=locations[,2],  t=rep(0.5, nlocs))
     func2 = fs.test.time(x=locations[,1], y=locations[,2],  t=rep(1, nlocs))
@@ -107,28 +113,28 @@ for(K in 1:5){
     observations <- matrix(c(obs1, obs2, obs3))
     observations <- observations + rnorm(nlocs*3, mean=0, sd=0.05*(diff(range(c(func1, func2, func3)))))
     
-    write.csv(format(observations[1:nlocs,], 
-                     digits=16), file=paste0(path, "observations_1.csv"))
-    write.csv(format(observations[(nlocs+1):(2*nlocs)], 
-                     digits=16), file=paste0(path, "observations_2.csv"))
-    write.csv(format(observations[(2*nlocs+1):(3*nlocs)], 
-                     digits=16), file=paste0(path, "observations_3.csv"))
-    write.csv(format(observations, digits=16), file=paste0(path, "observations.csv"))
+    # write.csv(format(observations[1:nlocs,], 
+    #                  digits=16), file=paste0(foldername, "observations_1.csv"))
+    # write.csv(format(observations[(nlocs+1):(2*nlocs)], 
+    #                  digits=16), file=paste0(foldername, "observations_2.csv"))
+    # write.csv(format(observations[(2*nlocs+1):(3*nlocs)], 
+    #                  digits=16), file=paste0(foldername, "observations_3.csv"))
+    write.csv(format(observations, digits=16), file=paste0(foldername, "observations.csv"))
     
     observations <- matrix(observations, nrow=nlocs, ncol=3)
     X = rbind(X1, X2, X3)
     
-    write.csv(format(X1[,2], digits=16), file=paste0(path, "W_1.csv"))
-    write.csv(format(X2[,2], digits=16), file=paste0(path, "W_2.csv"))
-    write.csv(format(X3[,2], digits=16), file=paste0(path, "W_3.csv"))
+    # write.csv(format(X1[,2], digits=16), file=paste0(foldername, "W_1.csv"))
+    # write.csv(format(X2[,2], digits=16), file=paste0(foldername, "W_2.csv"))
+    # write.csv(format(X3[,2], digits=16), file=paste0(foldername, "W_3.csv"))
     write.csv(format(X[,2], digits=16), 
-              file=paste0(path, "W.csv"))
+              file=paste0(foldername, "W.csv"))
     
-    write.csv(format(X1[,1], digits=16), file=paste0(path, "V_1.csv"))
-    write.csv(format(X2[,1], digits=16), file=paste0(path, "V_2.csv"))
-    write.csv(format(X3[,1], digits=16), file=paste0(path, "V_3.csv"))
+    # write.csv(format(X1[,1], digits=16), file=paste0(foldername, "V_1.csv"))
+    # write.csv(format(X2[,1], digits=16), file=paste0(foldername, "V_2.csv"))
+    # write.csv(format(X3[,1], digits=16), file=paste0(foldername, "V_3.csv"))
     write.csv(format(X[,1], digits=16), 
-              file=paste0(path, "V.csv"))
+              file=paste0(foldername, "V.csv"))
     
     # multi-domain "design_matrix"
     write.csv(format(
@@ -136,75 +142,37 @@ for(K in 1:5){
                     as.matrix(c(X[1:nlocs,1],            rep(0, times=2*nlocs))),
                     as.matrix(c(rep(0, times=nlocs),X[(nlocs+1):(2*nlocs),1],  rep(0, times=nlocs))),
                     as.matrix(c(rep(0, times=2*nlocs), X[(2*nlocs+1):(3*nlocs),1]))), digits=16), 
-              file=paste0(path, "X.csv"))
+              file=paste0(foldername, "X.csv"))
+    
+    func1 = fs.test.time(x=mesh$nodes[,1], y=mesh$nodes[,2],  t=rep(0.5, nnodes))
+    func2 = fs.test.time(x=mesh$nodes[,1], y=mesh$nodes[,2],  t=rep(1, nnodes))
+    func3 = fs.test.time(x=mesh$nodes[,1], y=mesh$nodes[,2],  t=rep(1.5, nnodes))
+    write.csv(format(as.matrix(c(func1, func2, func3)), 
+                     digits=16), file = paste0(foldername, "f.csv"))  
     
     invisible(capture.output(output_fdaPDE <- fdaPDEmixed::smooth.FEM.mixed(observations = observations, locations = locations,
                                                                             covariates = X, random_effect = c(1),
                                                                             FEMbasis = FEMbasis, lambda=1,
                                                                             FLAG_ITERATIVE = FALSE)))
     
-    write.csv(format(output_fdaPDE$beta, digits=16), file = paste0(path,"beta_hat.csv"))
-    write.csv(format(output_fdaPDE$b_i, digits=16), file = paste0(path,"b_hat.csv"))
-    write.csv(format(output_fdaPDE$fit.FEM.mixed$coeff[1:nnodes,], 
-                     digits=16), file = paste0(path,"f_1_hat.csv"))
-    write.csv(format(output_fdaPDE$fit.FEM.mixed$coeff[(nnodes+1):(2*nnodes),], 
-                     digits=16), file = paste0(path,"f_2_hat.csv"))
-    write.csv(format(output_fdaPDE$fit.FEM.mixed$coeff[(2*nnodes+1):(3*nnodes),], 
-                     digits=16), file = paste0(path,"f_3_hat.csv"))
+    outputfolder <- paste0(foldername, "monolithic/")
+    if(!dir.exists(outputfolder)) dir.create(outputfolder)
+    
+    write.csv(format(output_fdaPDE$beta, digits=16), file = paste0(outputfolder,"beta_hat.csv"))
+    write.csv(format(output_fdaPDE$b_i, digits=16), file = paste0(outputfolder,"alpha_hat.csv"))
+    # write.csv(format(output_fdaPDE$fit.FEM.mixed$coeff[1:nnodes,], 
+    #                  digits=16), file = paste0(outputfolder,"f_1_hat.csv"))
+    # write.csv(format(output_fdaPDE$fit.FEM.mixed$coeff[(nnodes+1):(2*nnodes),], 
+    #                  digits=16), file = paste0(outputfolder,"f_2_hat.csv"))
+    # write.csv(format(output_fdaPDE$fit.FEM.mixed$coeff[(2*nnodes+1):(3*nnodes),], 
+    #                  digits=16), file = paste0(outputfolder,"f_3_hat.csv"))
     write.csv(format(output_fdaPDE$fit.FEM.mixed$coeff, 
-                     digits=16), file = paste0(path,"f_hat.csv"))
-    
-    
-    func1 = fs.test.time(x=mesh$nodes[,1], y=mesh$nodes[,2],  t=rep(0.5, nnodes))
-    func2 = fs.test.time(x=mesh$nodes[,1], y=mesh$nodes[,2],  t=rep(1, nnodes))
-    func3 = fs.test.time(x=mesh$nodes[,1], y=mesh$nodes[,2],  t=rep(1.5, nnodes))
-    
-    write.csv(format(as.matrix(func1), digits=16), file = paste0(path, "f_1.csv")) # esatta !
-    write.csv(format(as.matrix(func2), digits=16), file = paste0(path, "f_2.csv"))
-    write.csv(format(as.matrix(func3), digits=16), file = paste0(path, "f_3.csv"))
-    write.csv(format(as.matrix(c(func1, func2, func3)), 
-                     digits=16), file = paste0(path, "f.csv"))     # esatta !
+                     digits=16), file = paste0(outputfolder,"f_hat.csv"))
     
     # richardson -----------------------------------------------------------------
     
-    path <- paste0(foldername, "richardson/", n_obs[j], "/")
-    if(!dir.exists(path)) dir.create(path)
-    
-    write.csv(format(locations, digits=16), file=paste0(path, "locations_1.csv"))
-    write.csv(format(rbind(locations,locations,locations), digits=16), 
-              file=paste0(path, "locations.csv"))
-    write.csv(format(X1, digits=16), file=paste0(path, "covariates_1.csv"))
-    write.csv(format(X2, digits=16), file=paste0(path, "covariates_2.csv"))
-    write.csv(format(X3, digits=16), file=paste0(path, "covariates_3.csv"))
-    write.csv(format(rbind(X1,X2,X3), digits=16), file=paste0(path, "covariates.csv"))
-    
-    write.csv(format(as.vector(observations)[1:nlocs], 
-                     digits=16), file=paste0(path, "observations_1.csv"))
-    write.csv(format(as.vector(observations)[(nlocs+1):(2*nlocs)], 
-                     digits=16), file=paste0(path, "observations_2.csv"))
-    write.csv(format(as.vector(observations)[(2*nlocs+1):(3*nlocs)], 
-                     digits=16), file=paste0(path, "observations_3.csv"))
-    write.csv(format(as.vector(observations), digits=16), file=paste0(path, "observations.csv"))
-    
-    write.csv(format(X1[,2], digits=16), file=paste0(path, "W_1.csv"))
-    write.csv(format(X2[,2], digits=16), file=paste0(path, "W_2.csv"))
-    write.csv(format(X3[,2], digits=16), file=paste0(path, "W_3.csv"))
-    write.csv(format(X[,2], digits=16), 
-              file=paste0(path, "W.csv"))
-    
-    write.csv(format(X1[,1], digits=16), file=paste0(path, "V_1.csv"))
-    write.csv(format(X2[,1], digits=16), file=paste0(path, "V_2.csv"))
-    write.csv(format(X3[,1], digits=16), file=paste0(path, "V_3.csv"))
-    write.csv(format(X[,1], digits=16), 
-              file=paste0(path, "V.csv"))
-    
-    # multi-domain "design_matrix"
-    write.csv(format(
-      cbind(as.matrix(X[,2]), 
-            as.matrix(c(X[1:nlocs,1],            rep(0, times=2*nlocs))),
-            as.matrix(c(rep(0, times=nlocs),X[(nlocs+1):(2*nlocs),1],  rep(0, times=nlocs))),
-            as.matrix(c(rep(0, times=2*nlocs), X[(2*nlocs+1):(3*nlocs),1]))), digits=16), 
-      file=paste0(path, "X.csv"))
+    outputfolder <- paste0(foldername, "richardson/")
+    if(!dir.exists(outputfolder)) dir.create(outputfolder)
     
     invisible(capture.output(output_fdaPDE <- fdaPDEmixed::smooth.FEM.mixed(observations = observations, locations = locations,
                                                                             covariates = X, random_effect = c(1),
@@ -212,21 +180,16 @@ for(K in 1:5){
                                                                             FLAG_ITERATIVE = TRUE, 
                                                                             anderson_memory = 1L))) # anderson_memory = 1 -> richardson method
     
-    write.csv(format(output_fdaPDE$beta, digits=16), file = paste0(path,"beta_hat.csv"))
-    write.csv(format(output_fdaPDE$b_i, digits=16), file = paste0(path,"b_hat.csv"))
-    write.csv(format(output_fdaPDE$fit.FEM.mixed$coeff[1:nnodes,], 
-                     digits=16), file = paste0(path,"f_1_hat.csv"))
-    write.csv(format(output_fdaPDE$fit.FEM.mixed$coeff[(nnodes+1):(2*nnodes),], 
-                     digits=16), file = paste0(path,"f_2_hat.csv"))
-    write.csv(format(output_fdaPDE$fit.FEM.mixed$coeff[(2*nnodes+1):(3*nnodes),], 
-                     digits=16), file = paste0(path,"f_3_hat.csv"))
+    write.csv(format(output_fdaPDE$beta, digits=16), file = paste0(outputfolder,"beta_hat.csv"))
+    write.csv(format(output_fdaPDE$b_i, digits=16), file = paste0(outputfolder,"alpha_hat.csv"))
+    # write.csv(format(output_fdaPDE$fit.FEM.mixed$coeff[1:nnodes,], 
+    #                  digits=16), file = paste0(outputfolder,"f_1_hat.csv"))
+    # write.csv(format(output_fdaPDE$fit.FEM.mixed$coeff[(nnodes+1):(2*nnodes),], 
+    #                  digits=16), file = paste0(outputfolder,"f_2_hat.csv"))
+    # write.csv(format(output_fdaPDE$fit.FEM.mixed$coeff[(2*nnodes+1):(3*nnodes),], 
+    #                  digits=16), file = paste0(outputfolder,"f_3_hat.csv"))
     write.csv(format(output_fdaPDE$fit.FEM.mixed$coeff, 
-                     digits=16), file = paste0(path,"f_hat.csv"))
-    
-    write.csv(format(as.matrix(func1), digits=16), file = paste0(path, "f_1.csv"))
-    write.csv(format(as.matrix(func2), digits=16), file = paste0(path, "f_2.csv"))
-    write.csv(format(as.matrix(func3), digits=16), file = paste0(path, "f_3.csv"))
-    write.csv(format(as.matrix(c(func1, func2, func3)), 
-                     digits=16), file = paste0(path, "f.csv"))  
+                     digits=16), file = paste0(outputfolder,"f_hat.csv"))
   }
 }
+
